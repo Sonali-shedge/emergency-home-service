@@ -3,6 +3,7 @@ package com.EventManagementSystem.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,9 +49,9 @@ public class ServiceController {
 				providerServiceImpl.createServiceProvider(serviceProviderRequestDTO), HttpStatus.CREATED);
 	}
 
-	@PostMapping("/createServiceRequest")
-	public ResponseEntity<ServiceResponseDTO> createServiceRequest(@RequestBody ServiceRequestDTO serviceRequestDTO) {
-		return new ResponseEntity<ServiceResponseDTO>(requestServiceImpl.createServiceRequest(serviceRequestDTO),
+	@PostMapping("/createServiceRequest/{userName}")
+	public ResponseEntity<ServiceResponseDTO> createServiceRequest(@RequestBody ServiceRequestDTO serviceRequestDTO , @PathVariable String userName) {
+		return new ResponseEntity<ServiceResponseDTO>(requestServiceImpl.createServiceRequest(serviceRequestDTO , userName),
 				HttpStatus.CREATED);
 	}
 

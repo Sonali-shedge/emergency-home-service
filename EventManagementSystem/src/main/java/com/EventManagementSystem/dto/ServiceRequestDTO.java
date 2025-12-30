@@ -17,11 +17,12 @@ import lombok.NoArgsConstructor;
 public class ServiceRequestDTO {
 	private String requestDescription;
 
-	private ServiceRequestStatus status;
+	//private ServiceRequestStatus status;
 	private EmergencyLevel emergencyLevel;
 	private User user;
-	private ServiceProvider serviceProvider;
-	private ServiceCategory serviceCategory;
-	private Address address;
+//	private ServiceProvider serviceProvider;
+	private String serviceCategoryName;
+	//private Address address;
+	private Long addressId;
 
 }

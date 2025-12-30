@@ -10,37 +10,46 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.EventManagementSystem.config.ApiError;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
 	@ExceptionHandler(UserNotFoundException.class)
-	public ResponseEntity<Map<String, Object>> handleUserNotFound(UserNotFoundException ex) {
-		return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage());
+	public ResponseEntity<ApiError> handleUserNotFound(UserNotFoundException ex) {
+
+		ApiError error = new ApiError(HttpStatus.NOT_FOUND.value(), ex.getMessage());
+
+		return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+	}
+
+	@ExceptionHandler(AddressNotFoundException.class)
+	public ResponseEntity<ApiError> handleAddressNotFound(AddressNotFoundException ex) {
+		ApiError error = new ApiError(HttpStatus.NOT_FOUND.value(), ex.getMessage());
+
+		return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+	}
+
+	@ExceptionHandler(ServiceCategoryNotFoundException.class)
+	public ResponseEntity<ApiError> handleServiceCategoryNotFound(ServiceCategoryNotFoundException ex) {
+		ApiError error = new ApiError(HttpStatus.NOT_FOUND.value(), ex.getMessage());
+
+		return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
 	}
 
 	@ExceptionHandler(InvalidCredentialsException.class)
-	public ResponseEntity<Map<String, Object>> handleInvalidCredentials(InvalidCredentialsException ex) {
-		return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage());
+	public ResponseEntity<ApiError> handleInvalidCredentials(InvalidCredentialsException ex) {
+		ApiError error = new ApiError(HttpStatus.NOT_FOUND.value(), ex.getMessage());
+
+		return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<Map<String, String>> handleValidationErrors(MethodArgumentNotValidException ex) {
+	public ResponseEntity<ApiError> handleValidationErrors(MethodArgumentNotValidException ex) {
 
-		Map<String, String> errors = new HashMap<>();
+		ApiError error = new ApiError(HttpStatus.NOT_FOUND.value(), ex.getMessage());
 
-		ex.getBindingResult().getFieldErrors()
-				.forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
-
-		return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
-	}
-
-	private ResponseEntity<Map<String, Object>> buildResponse(HttpStatus status, String message) {
-		Map<String, Object> response = new HashMap<>();
-		response.put("timestamp", LocalDateTime.now());
-		response.put("status", status.value());
-		response.put("error", message);
-
-		return new ResponseEntity<>(response, status);
+		return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
 	}
 
 }

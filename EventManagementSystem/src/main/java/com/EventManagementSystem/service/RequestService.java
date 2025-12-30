@@ -6,6 +6,6 @@ import com.EventManagementSystem.entity.ServiceRequest;
 
 public interface RequestService {
 
-	public ServiceResponseDTO createServiceRequest(ServiceRequestDTO serviceRequestDTO);
+	public ServiceResponseDTO createServiceRequest(ServiceRequestDTO serviceRequestDTO , String userName);
 
 }

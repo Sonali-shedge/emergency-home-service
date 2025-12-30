@@ -44,7 +44,7 @@ public class User {
 	@JoinColumn(name = "userId")
 	private List<Address> address = new ArrayList<>();
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY ,  cascade = CascadeType.ALL)
 	@JoinColumn(name = "role_id")
 	private Roles role;
 

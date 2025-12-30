@@ -32,7 +32,7 @@ public class ServiceProvider {
 	private Boolean isVerified;
 	private LocalDateTime createdAt;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY , cascade = CascadeType.ALL)
 	@JoinColumn(name = "serviceCategoryId")
 	private ServiceCategory category;
 

@@ -19,6 +19,6 @@ public class ServiceProviderRequestDTO {
 	private Double rating;
 	private Boolean isVerified;
 
-	private ServiceCategory category;
+	private Long serviceCategoryId;
 
 }

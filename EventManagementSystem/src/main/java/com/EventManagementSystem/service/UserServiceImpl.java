@@ -14,6 +14,7 @@ import com.EventManagementSystem.dto.UserResponseDTO;
 import com.EventManagementSystem.entity.Address;
 import com.EventManagementSystem.entity.Roles;
 import com.EventManagementSystem.entity.User;
+import com.EventManagementSystem.exception.UserNotFoundException;
 import com.EventManagementSystem.repository.RoleRepository;
 import com.EventManagementSystem.repository.UserRepository;
 
@@ -67,7 +68,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	public UserResponseDTO filterUser(Long uId) {
-		User user = userRepository.findById(uId).orElseThrow(() -> new RuntimeException("user not found"));
+		User user = userRepository.findById(uId).orElseThrow(() -> new UserNotFoundException("user not found"));
 		return modelMapper.map(user, UserResponseDTO.class);
 	}
 
@@ -78,7 +79,7 @@ public class UserServiceImpl implements UserService {
 
 	public UserResponseDTO updateUser(Long uId, UserRequestDTO userRequestDTO) {
 		User userInDB = userRepository.findById(uId)
-				.orElseThrow(() -> new RuntimeException("user not found with this id " + uId));
+				.orElseThrow(() -> new UserNotFoundException("user not found with this id " + uId));
 		userInDB.setUserName(userRequestDTO.getUserName());
 		userInDB.setEmail(userRequestDTO.getEmail());
 		userInDB.setPassword(userRequestDTO.getPassword());

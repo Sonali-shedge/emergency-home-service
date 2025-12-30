@@ -19,6 +19,8 @@ import lombok.NoArgsConstructor;
 public class Address {
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long addressId;
 	private String houseNumber;
 	private String street;
 	private String area;

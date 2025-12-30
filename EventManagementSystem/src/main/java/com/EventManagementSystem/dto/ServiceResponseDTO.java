@@ -19,9 +19,10 @@ public class ServiceResponseDTO {
 
 	private ServiceRequestStatus status;
 	private EmergencyLevel emergencyLevel;
-	private UserResponseDTO user;
-	private ServiceProviderResponseDTO serviceProvider;
-	private ServiceCategoryResponseDTO serviceCategory;
+	private String userName;
+//	private ServiceProviderResponseDTO serviceProvider;
+	//private ServiceCategoryResponseDTO serviceCategory;
+	private String serviceCategoryName;
 	private AddressResponseDTO address;
 
 }

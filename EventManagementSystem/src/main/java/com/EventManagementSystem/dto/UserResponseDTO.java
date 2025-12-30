@@ -19,11 +19,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserResponseDTO {
 	private String userName;
-	private String email;
-	private String password;
-	private String phone;
-	@Enumerated(EnumType.STRING)
-	private roleType role;
+	//private String email;
+	//private String password;
+	//private String phone;
+	//@Enumerated(EnumType.STRING)
+	//private roleType role;
 	private List<AddressRequestDTO> address;
 
 }

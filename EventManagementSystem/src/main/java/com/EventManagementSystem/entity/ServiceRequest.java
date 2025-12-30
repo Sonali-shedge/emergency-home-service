@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import com.EventManagementSystem.enumT.EmergencyLevel;
 import com.EventManagementSystem.enumT.ServiceRequestStatus;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -42,19 +43,19 @@ public class ServiceRequest {
 
 	private LocalDateTime completedAt;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY , cascade = CascadeType.ALL)
 	@JoinColumn(name = "userId")
 	private User user;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY ,  cascade = CascadeType.ALL)
 	@JoinColumn(name = "serviceProviderId")
 	private ServiceProvider serviceProvider;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY ,  cascade = CascadeType.ALL)
 	@JoinColumn(name = "serviceCategoryId")
 	private ServiceCategory serviceCategory;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY ,  cascade = CascadeType.ALL)
 	@JoinColumn(name = "addressId")
 	private Address address;
 
