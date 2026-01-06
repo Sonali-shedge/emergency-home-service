@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,16 +20,12 @@ import com.EventManagementSystem.service.UserServiceImpl;
 
 @RestController
 @RequestMapping("/api/user")
+@PreAuthorize("hasRole('ADMIN')")
 public class UserController {
-
+	
 	@Autowired
 	private UserServiceImpl userServiceImpl;
 
-	@PostMapping("/registerUser")
-	public ResponseEntity<UserResponseDTO> registerUser(@RequestBody UserRequestDTO userRequestDTO) {
-		return new ResponseEntity<UserResponseDTO>(userServiceImpl.registerUser(userRequestDTO), HttpStatus.CREATED);
-
-	}
 
 	@GetMapping("/filterUser/{uId}")
 	public ResponseEntity<UserResponseDTO> filterUser(@PathVariable Long uId) {

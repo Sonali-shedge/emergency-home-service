@@ -10,7 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.EventManagementSystem.dto.LoginRequestDTO;
 import com.EventManagementSystem.dto.LoginResponseDTO;
+import com.EventManagementSystem.dto.UserRequestDTO;
+import com.EventManagementSystem.dto.UserResponseDTO;
 import com.EventManagementSystem.service.AuthServiceImpl;
+import com.EventManagementSystem.service.UserServiceImpl;
 
 import jakarta.validation.Valid;
 
@@ -20,6 +23,15 @@ public class AuthController {
 
 	@Autowired
 	private AuthServiceImpl authServiceImpl;
+
+	@Autowired
+	private UserServiceImpl userServiceImpl;
+
+	@PostMapping("/registerUser")
+	public ResponseEntity<UserResponseDTO> registerUser(@RequestBody UserRequestDTO userRequestDTO) {
+		return new ResponseEntity<UserResponseDTO>(userServiceImpl.registerUser(userRequestDTO), HttpStatus.CREATED);
+
+	}
 
 	@PostMapping("/login")
 	public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO) {

@@ -43,19 +43,19 @@ public class ServiceRequest {
 
 	private LocalDateTime completedAt;
 
-	@ManyToOne(fetch = FetchType.LAZY , cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY )
 	@JoinColumn(name = "userId")
 	private User user;
 
-	@ManyToOne(fetch = FetchType.LAZY ,  cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "serviceProviderId")
 	private ServiceProvider serviceProvider;
 
-	@ManyToOne(fetch = FetchType.LAZY ,  cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "serviceCategoryId")
 	private ServiceCategory serviceCategory;
 
-	@ManyToOne(fetch = FetchType.LAZY ,  cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "addressId")
 	private Address address;
 
