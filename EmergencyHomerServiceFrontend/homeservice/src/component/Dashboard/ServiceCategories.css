@@ -1,0 +1,63 @@
+.category-page {
+  padding: 20px;
+}
+
+.add-category {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.add-category input {
+  padding: 8px;
+  width: 220px;
+}
+
+.add-category button {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+.category-table {
+  width: 100%;
+  background: white;
+  border-collapse: collapse;
+}
+
+.category-table th,
+.category-table td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+}
+
+.category-table th {
+  background: #f4f6f8;
+}
+
+.active {
+  color: green;
+  font-weight: bold;
+}
+
+.inactive {
+  color: red;
+  font-weight: bold;
+}
+
+.btn-enable {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+}
+
+.btn-disable {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+}

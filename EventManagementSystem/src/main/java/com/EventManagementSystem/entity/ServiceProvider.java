@@ -2,8 +2,12 @@ package com.EventManagementSystem.entity;
 
 import java.time.LocalDateTime;
 
+import com.EventManagementSystem.enumT.AvailabilityStatus;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,15 +30,18 @@ public class ServiceProvider {
 	private Long providerId;
 	private String providerName;
 	private Integer experineceInYears;
-	private String availabilityStatus;
+	@Enumerated(EnumType.STRING)
+	private AvailabilityStatus availabilityStatus;
 	private Integer serviceRadiusinKm;
 	private Double rating;
 	private Boolean isVerified;
 	private LocalDateTime createdAt;
+	private Double latitude;
+	private Double longitude;
 
 	@ManyToOne(fetch = FetchType.LAZY , cascade = CascadeType.ALL)
 	@JoinColumn(name = "serviceCategoryId")
-	private ServiceCategory category;
+	private ServiceCategory serviceCategory;
 
 	@PrePersist
 	public void onCreate() {

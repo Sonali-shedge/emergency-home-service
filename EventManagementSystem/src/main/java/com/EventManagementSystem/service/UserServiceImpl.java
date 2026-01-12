@@ -3,7 +3,6 @@ package com.EventManagementSystem.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.jspecify.annotations.Nullable;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,6 +13,7 @@ import com.EventManagementSystem.dto.UserResponseDTO;
 import com.EventManagementSystem.entity.Address;
 import com.EventManagementSystem.entity.Roles;
 import com.EventManagementSystem.entity.User;
+import com.EventManagementSystem.exception.RoleNotFoundException;
 import com.EventManagementSystem.exception.UserNotFoundException;
 import com.EventManagementSystem.repository.RoleRepository;
 import com.EventManagementSystem.repository.UserRepository;
@@ -35,8 +35,13 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserResponseDTO registerUser(UserRequestDTO userRequestDTO) {
 
+		if (userRequestDTO.getRole().equalsIgnoreCase("SERVICE_PROVIDER")) {
+			throw new RuntimeException(
+					"Cannot register SERVICE_PROVIDER via this API. Only ADMIN can create providers.");
+		}
 		Roles role = roleRepository.findByRoleName(userRequestDTO.getRole())
-				.orElseThrow(() -> new RuntimeException("role is not exists"));
+				.orElseThrow(() -> new RoleNotFoundException("role is not exists"));
+
 		User user = new User();
 		user.setUserName(userRequestDTO.getUserName());
 		user.setEmail(userRequestDTO.getEmail());

@@ -1,11 +1,16 @@
 package com.EventManagementSystem.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.jspecify.annotations.Nullable;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.EventManagementSystem.dto.ServiceProviderRequestDTO;
 import com.EventManagementSystem.dto.ServiceProviderResponseDTO;
+import com.EventManagementSystem.dto.UserResponseDTO;
 import com.EventManagementSystem.entity.ServiceCategory;
 import com.EventManagementSystem.entity.ServiceProvider;
 import com.EventManagementSystem.exception.ServiceCategoryNotFoundException;
@@ -33,10 +38,20 @@ public class ProviderServiceImpl implements ProviderService {
 	provider.setAvailabilityStatus(serviceProviderRequestDTO.getAvailabilityStatus());
 	provider.setServiceRadiusinKm(serviceProviderRequestDTO.getServiceRadiusinKm());
 	provider.setRating(serviceProviderRequestDTO.getRating());
-	provider.setCategory(category);
+	provider.setServiceCategory(category);
 	//ServiceProvider provider = modelMapper.map(serviceProviderRequestDTO, ServiceProvider.class);
 		ServiceProvider savedProvider = serviceProviderRepository.save(provider);
 		return modelMapper.map(savedProvider, ServiceProviderResponseDTO.class);
 	}
+
+	@Override
+	public List<ServiceProviderResponseDTO> getAllServiceProviders() {
+		List<ServiceProvider> serviceProviders = serviceProviderRepository.findAll();
+		return serviceProviders.stream().map(dto-> modelMapper.map(dto, ServiceProviderResponseDTO.class)).collect(Collectors.toList());
+	}
+
+	
+	
+
 
 }

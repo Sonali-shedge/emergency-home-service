@@ -1,0 +1,46 @@
+.service-provider-page {
+  padding: 20px;
+}
+
+.provider-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+.provider-table th,
+.provider-table td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+}
+
+.provider-table th {
+  background: #f4f6f8;
+}
+
+.active {
+  color: green;
+  font-weight: bold;
+}
+
+.inactive {
+  color: red;
+  font-weight: bold;
+}
+
+.btn-enable {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.btn-disable {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  cursor: pointer;
+}

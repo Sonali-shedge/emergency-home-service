@@ -2,7 +2,12 @@ package com.EventManagementSystem.entity;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -23,7 +28,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class User {
+public class User implements UserDetails {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long userId;
@@ -44,7 +49,7 @@ public class User {
 	@JoinColumn(name = "userId")
 	private List<Address> address = new ArrayList<>();
 
-	@ManyToOne(fetch = FetchType.LAZY ,  cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.EAGER ,  cascade = CascadeType.ALL)
 	@JoinColumn(name = "role_id")
 	private Roles role;
 
@@ -57,5 +62,20 @@ public class User {
 	@PreUpdate
 	public void onUpdate() {
 		this.updatedAt = LocalDateTime.now();
+	}
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return List.of(new SimpleGrantedAuthority("ROLE" +role.getRoleName()));
+	}
+
+	@Override
+	public String getUsername() {return null;};
+		
+
+	
+	public String getUserName() {
+		
+		return this.userName=userName;
 	}
 }

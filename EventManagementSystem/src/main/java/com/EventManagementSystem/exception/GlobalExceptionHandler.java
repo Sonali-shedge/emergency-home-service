@@ -43,6 +43,27 @@ public class GlobalExceptionHandler {
 
 		return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
 	}
+	
+	@ExceptionHandler(RoleNotFoundException.class)
+	public ResponseEntity<ApiError> handleRoleNotFound(RoleNotFoundException ex) {
+		ApiError error = new ApiError(HttpStatus.NOT_FOUND.value(), ex.getMessage());
+
+		return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+	}
+	
+	@ExceptionHandler(ServiceRequestNotFoundException.class)
+	public ResponseEntity<ApiError> handleServiceRequestNotFound(ServiceRequestNotFoundException ex) {
+		ApiError error = new ApiError(HttpStatus.NOT_FOUND.value(), ex.getMessage());
+
+		return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+	}
+	
+	@ExceptionHandler(ServiceProviderNotFoundException.class)
+	public ResponseEntity<ApiError> handleServiceProviderNotFound(ServiceProviderNotFoundException ex) {
+		ApiError error = new ApiError(HttpStatus.NOT_FOUND.value(), ex.getMessage());
+
+		return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<ApiError> handleValidationErrors(MethodArgumentNotValidException ex) {

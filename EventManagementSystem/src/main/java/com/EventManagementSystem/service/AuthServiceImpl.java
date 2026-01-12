@@ -11,6 +11,7 @@ import com.EventManagementSystem.entity.User;
 import com.EventManagementSystem.exception.InvalidCredentialsException;
 import com.EventManagementSystem.exception.UserNotFoundException;
 import com.EventManagementSystem.repository.UserRepository;
+import com.EventManagementSystem.utils.JwtUtils;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -22,6 +23,9 @@ public class AuthServiceImpl implements AuthService {
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	
+	@Autowired
+	private JwtUtils jwtUtils;
 
 	@Override
 	public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) {
@@ -32,6 +36,8 @@ public class AuthServiceImpl implements AuthService {
 		if (!passwordEncoder.matches(loginRequestDTO.getPassword(), user.getPassword())) {
 			throw new InvalidCredentialsException("invalid password..");
 		}
+		
+		String token = jwtUtils.generateToken(user);
 
 		LoginResponseDTO dto = new LoginResponseDTO();
 		dto.setUserId(user.getUserId());
@@ -39,6 +45,7 @@ public class AuthServiceImpl implements AuthService {
 		dto.setEmail(user.getEmail());
 		dto.setRole(user.getRole().getRoleName());
 		dto.setMessage("Login successfull....!!!");
+		dto.setToken(token);
 
 		return dto;
 	}

@@ -1,0 +1,102 @@
+package com.EventManagementSystem.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.EventManagementSystem.dto.ServiceCategoryRequestDTO;
+import com.EventManagementSystem.dto.ServiceCategoryResponseDTO;
+import com.EventManagementSystem.dto.ServiceProviderRequestDTO;
+import com.EventManagementSystem.dto.ServiceProviderResponseDTO;
+import com.EventManagementSystem.dto.ServiceResponseDTO;
+import com.EventManagementSystem.dto.ServicesRequestDTO;
+import com.EventManagementSystem.dto.ServicesResponseDTO;
+import com.EventManagementSystem.service.CategoryServiceImpl;
+import com.EventManagementSystem.service.ProviderServiceImpl;
+import com.EventManagementSystem.service.RequestServiceImpl;
+import com.EventManagementSystem.service.ServiceImpl;
+
+@RestController
+@RequestMapping("api/admin")
+//@PreAuthorize("hasRole('ADMIN')")
+public class AdminController {
+	
+	@Autowired
+	private CategoryServiceImpl categoryServiceImpl;
+	
+	@Autowired
+	private ProviderServiceImpl providerServiceImpl;
+	
+	@Autowired
+	private RequestServiceImpl requestServiceImpl;
+	
+	@Autowired
+	private ServiceImpl serviceImpl;
+	
+	@PostMapping("/createServiceCategory")
+	public ResponseEntity<ServiceCategoryResponseDTO> createServiceCategory(
+			@RequestBody ServiceCategoryRequestDTO serviceCategoryRequestDTO) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+	    System.out.println("AUTH NAME       : " + auth.getName());
+	    System.out.println("AUTH AUTHORITIES: " + auth.getAuthorities());
+	    System.out.println("AUTH AUTHENTICATED: " + auth.isAuthenticated());
+		return new ResponseEntity<ServiceCategoryResponseDTO>(
+				categoryServiceImpl.createServiceCategory(serviceCategoryRequestDTO), HttpStatus.CREATED);
+	}
+	
+	@PostMapping("/createServiceProvider")
+	public ResponseEntity<ServiceProviderResponseDTO> createServiceProvider(
+			@RequestBody ServiceProviderRequestDTO serviceProviderRequestDTO) {
+		return new ResponseEntity<ServiceProviderResponseDTO>(
+				providerServiceImpl.createServiceProvider(serviceProviderRequestDTO), HttpStatus.CREATED);
+	}
+	
+	
+	@PostMapping("/createServices/{serviceCategoryName}")
+	public ResponseEntity<ServicesResponseDTO> createServices(
+			@RequestBody ServicesRequestDTO servicesRequestDTO , @PathVariable String serviceCategoryName ) {
+		return new ResponseEntity<ServicesResponseDTO>(
+				serviceImpl.createServices(servicesRequestDTO , serviceCategoryName), HttpStatus.CREATED);
+	}
+	
+	@GetMapping("/getAllServices/{serviceCategoryName}")
+	public ResponseEntity<List<ServicesResponseDTO>> getAllServices(@PathVariable String serviceCategoryName ) {
+		return new ResponseEntity<List<ServicesResponseDTO>>(
+				serviceImpl.getAllServices(serviceCategoryName), HttpStatus.OK);
+	}
+	
+	
+	@GetMapping("/getServicesById/{serviceId}")
+	public ResponseEntity <ServicesResponseDTO> getServicesById(@PathVariable Long serviceId ) {
+		return new ResponseEntity<ServicesResponseDTO>(serviceImpl.getServicesById(serviceId) , HttpStatus.OK);
+	}
+	
+	@GetMapping("/getAllServiceProviders")
+	public ResponseEntity <List<ServiceProviderResponseDTO>> getAllServiceProviders()
+	{
+		return new ResponseEntity<List<ServiceProviderResponseDTO>>(providerServiceImpl.getAllServiceProviders() ,HttpStatus.OK );
+	}
+	
+
+	@PutMapping("/assignProvider/{serviceRequestId}")
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<ServiceResponseDTO> assignProvider(@PathVariable Long serviceRequestId)
+	{
+		return new ResponseEntity<ServiceResponseDTO>(requestServiceImpl.assignProvider(serviceRequestId) , HttpStatus.OK);
+	}
+
+}
+ 

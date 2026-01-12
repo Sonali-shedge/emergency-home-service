@@ -1,6 +1,7 @@
 package com.EventManagementSystem.dto;
 
 import com.EventManagementSystem.entity.ServiceCategory;
+import com.EventManagementSystem.enumT.AvailabilityStatus;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,11 +14,11 @@ public class ServiceProviderResponseDTO {
 
 	private String providerName;
 	private Integer experineceInYears;
-	private String availabilityStatus;
+	private AvailabilityStatus availabilityStatus;
 	private Integer serviceRadiusinKm;
 	private Double rating;
 	private Boolean isVerified;
 
-	private ServiceCategory category;
+	private Long serviceCategoryId;
 
 }
