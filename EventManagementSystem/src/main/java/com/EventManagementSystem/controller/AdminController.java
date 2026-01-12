@@ -21,13 +21,16 @@ import com.EventManagementSystem.dto.ServiceCategoryResponseDTO;
 import com.EventManagementSystem.dto.ServiceProviderRequestDTO;
 import com.EventManagementSystem.dto.ServiceProviderResponseDTO;
 import com.EventManagementSystem.dto.ServiceResponseDTO;
+import com.EventManagementSystem.dto.ServicesRequestDTO;
+import com.EventManagementSystem.dto.ServicesResponseDTO;
 import com.EventManagementSystem.service.CategoryServiceImpl;
 import com.EventManagementSystem.service.ProviderServiceImpl;
 import com.EventManagementSystem.service.RequestServiceImpl;
+import com.EventManagementSystem.service.ServiceImpl;
 
 @RestController
 @RequestMapping("api/admin")
-@PreAuthorize("hasRole('ADMIN')")
+//@PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
 	
 	@Autowired
@@ -38,6 +41,9 @@ public class AdminController {
 	
 	@Autowired
 	private RequestServiceImpl requestServiceImpl;
+	
+	@Autowired
+	private ServiceImpl serviceImpl;
 	
 	@PostMapping("/createServiceCategory")
 	public ResponseEntity<ServiceCategoryResponseDTO> createServiceCategory(
@@ -59,6 +65,25 @@ public class AdminController {
 	}
 	
 	
+	@PostMapping("/createServices/{serviceCategoryName}")
+	public ResponseEntity<ServicesResponseDTO> createServices(
+			@RequestBody ServicesRequestDTO servicesRequestDTO , @PathVariable String serviceCategoryName ) {
+		return new ResponseEntity<ServicesResponseDTO>(
+				serviceImpl.createServices(servicesRequestDTO , serviceCategoryName), HttpStatus.CREATED);
+	}
+	
+	@GetMapping("/getAllServices/{serviceCategoryName}")
+	public ResponseEntity<List<ServicesResponseDTO>> getAllServices(@PathVariable String serviceCategoryName ) {
+		return new ResponseEntity<List<ServicesResponseDTO>>(
+				serviceImpl.getAllServices(serviceCategoryName), HttpStatus.OK);
+	}
+	
+	
+	@GetMapping("/getServicesById/{serviceId}")
+	public ResponseEntity <ServicesResponseDTO> getServicesById(@PathVariable Long serviceId ) {
+		return new ResponseEntity<ServicesResponseDTO>(serviceImpl.getServicesById(serviceId) , HttpStatus.OK);
+	}
+	
 	@GetMapping("/getAllServiceProviders")
 	public ResponseEntity <List<ServiceProviderResponseDTO>> getAllServiceProviders()
 	{
@@ -74,3 +99,4 @@ public class AdminController {
 	}
 
 }
+ 

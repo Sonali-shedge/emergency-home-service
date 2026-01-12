@@ -1,5 +1,8 @@
 package com.EventManagementSystem.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.jspecify.annotations.Nullable;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,5 +30,14 @@ public class CategoryServiceImpl implements CategoryService {
 		ServiceCategory savedCategory = serviceCategoryRepository.save(category);
 		return modelMapper.map(savedCategory, ServiceCategoryResponseDTO.class);
 	}
+
+	@Override
+	public List<ServiceCategoryResponseDTO> getAllServiceCategory() {
+		
+	List<ServiceCategory> serviceCategories =	serviceCategoryRepository.findAll();
+		
+		return serviceCategories.stream().map(dto-> modelMapper.map(dto, ServiceCategoryResponseDTO.class)).collect(Collectors.toList());
+	}
+
 
 }

@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.EventManagementSystem.entity.Address;
 import com.EventManagementSystem.entity.Roles;
-import com.EventManagementSystem.enumT.roleType;
+
 
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;

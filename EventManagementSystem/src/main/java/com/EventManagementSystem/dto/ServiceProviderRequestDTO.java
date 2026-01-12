@@ -1,6 +1,5 @@
 package com.EventManagementSystem.dto;
 
-import com.EventManagementSystem.entity.ServiceCategory;
 import com.EventManagementSystem.enumT.AvailabilityStatus;
 
 import lombok.AllArgsConstructor;

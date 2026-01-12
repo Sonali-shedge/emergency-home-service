@@ -14,17 +14,23 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.EventManagementSystem.dto.ServiceCategoryResponseDTO;
 import com.EventManagementSystem.dto.UserRequestDTO;
 import com.EventManagementSystem.dto.UserResponseDTO;
+import com.EventManagementSystem.entity.ServiceCategory;
+import com.EventManagementSystem.service.CategoryServiceImpl;
 import com.EventManagementSystem.service.UserServiceImpl;
 
 @RestController
 @RequestMapping("/api/user")
-@PreAuthorize("hasRole('ADMIN')")
+//@PreAuthorize("hasRole('ADMIN')")
 public class UserController {
 	
 	@Autowired
 	private UserServiceImpl userServiceImpl;
+	
+	@Autowired
+	private CategoryServiceImpl categoryServiceImpl;
 
 
 	@GetMapping("/filterUser/{uId}")
@@ -43,5 +49,12 @@ public class UserController {
 			@RequestBody UserRequestDTO userRequestDTO) {
 		return new ResponseEntity<UserResponseDTO>(userServiceImpl.updateUser(uId, userRequestDTO), HttpStatus.OK);
 	}
-
+	
+	
+	@GetMapping("/getAllServiceCategory")
+public ResponseEntity<List<ServiceCategoryResponseDTO>> getAllServiceCategory()
+{
+	return new ResponseEntity<List<ServiceCategoryResponseDTO>>(categoryServiceImpl.getAllServiceCategory(), HttpStatus.OK);
+}
+ 
 }
