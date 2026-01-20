@@ -2,10 +2,8 @@ package com.EventManagementSystem.dto;
 
 import java.util.List;
 
-import com.EventManagementSystem.entity.Address;
+import com.EventManagementSystem.enumT.Role;
 
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,8 +18,8 @@ public class UserRequestDTO {
 	private String email;
 	private String password;
 	private String phone;
-	@Enumerated(EnumType.STRING)
-	private String role;
+//	@Enumerated(EnumType.STRING)
+	private Role role;
 	private List<AddressRequestDTO> address;
 
 }

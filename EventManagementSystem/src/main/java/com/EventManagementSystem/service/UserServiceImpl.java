@@ -1,5 +1,6 @@
 package com.EventManagementSystem.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -8,11 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.EventManagementSystem.dto.AddressRequestDTO;
 import com.EventManagementSystem.dto.UserRequestDTO;
 import com.EventManagementSystem.dto.UserResponseDTO;
 import com.EventManagementSystem.entity.Address;
 import com.EventManagementSystem.entity.Roles;
 import com.EventManagementSystem.entity.User;
+import com.EventManagementSystem.enumT.Role;
 import com.EventManagementSystem.exception.RoleNotFoundException;
 import com.EventManagementSystem.exception.UserNotFoundException;
 import com.EventManagementSystem.repository.RoleRepository;
@@ -31,46 +34,122 @@ public class UserServiceImpl implements UserService {
 	private RoleRepository roleRepository;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	
+	@Autowired
+	LocationIQGeocodingService locationIQGeocodingService;
 
+//	@Override
+//	public UserResponseDTO registerUser(UserRequestDTO userRequestDTO) {
+//
+//		 if (userRequestDTO.getRole()== Role.SERVICE_PROVIDER ) {
+//		        throw new RuntimeException(
+//		            "Cannot register SERVICE_PROVIDER via this API. Only ADMIN can create providers."
+//		        );
+//		    }
+//		 Roles roleEntity = roleRepository.findByRoleName(userRequestDTO.getRole().name())
+//		            .orElseThrow(() -> new RoleNotFoundException("Role does not exist"));
+//		User user = new User();
+//		user.setUserName(userRequestDTO.getUserName());
+//		user.setEmail(userRequestDTO.getEmail());
+//		user.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
+//		user.setPhone(userRequestDTO.getPhone());
+//		user.setRole(roleEntity);
+//
+//
+//		
+//		List<Address> addressList = new ArrayList<>();
+//
+//	    for (AddressRequestDTO addrDTO : userRequestDTO.getAddress()) {
+//
+//	        Address address = new Address();
+//	        address.setHouseNumber(addrDTO.getHouseNumber());
+//	        address.setStreet(addrDTO.getStreet());
+//	        address.setArea(addrDTO.getArea());
+//	        address.setCity(addrDTO.getCity());
+//	        address.setState(addrDTO.getState());
+//	        address.setPincode(addrDTO.getPincode());
+//
+//	        // 🔥 PHOTON API CALL
+//	        String fullAddress = buildFullAddress(addrDTO);
+//	        System.out.println("Geocoding address: " + fullAddress);
+//	        double[] latLng = photonGeocodingService.getLatLong(fullAddress);
+//
+//	        address.setLatitude(latLng[0]);
+//	        address.setLongitude(latLng[1]);
+//
+//	        address.setUser(user);
+//	        addressList.add(address);
+//	    }
+//
+//	    user.setAddress(addressList);
+//
+//	    // Step 2e: Save user
+//	    userRepository.save(user);
+//
+//	    // Step 2f: Map to response DTO (implement mapToResponse)
+//	    return modelMapper.map(user, UserResponseDTO.class);
+//	
+//	}
+	
 	@Override
 	public UserResponseDTO registerUser(UserRequestDTO userRequestDTO) {
 
-		if (userRequestDTO.getRole().equalsIgnoreCase("SERVICE_PROVIDER")) {
-			throw new RuntimeException(
-					"Cannot register SERVICE_PROVIDER via this API. Only ADMIN can create providers.");
-		}
-		Roles role = roleRepository.findByRoleName(userRequestDTO.getRole())
-				.orElseThrow(() -> new RoleNotFoundException("role is not exists"));
+	    // 1️⃣ Block SERVICE_PROVIDER registration
+	    if (userRequestDTO.getRole() == Role.SERVICE_PROVIDER) {
+	        throw new RuntimeException(
+	            "Cannot register SERVICE_PROVIDER via this API. Only ADMIN can create providers."
+	        );
+	    }
 
-		User user = new User();
-		user.setUserName(userRequestDTO.getUserName());
-		user.setEmail(userRequestDTO.getEmail());
-		user.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
-		user.setPhone(userRequestDTO.getPhone());
-		user.setRole(role);
+	    // 2️⃣ Fetch role
+	    Roles roleEntity = roleRepository
+	            .findByRoleName(userRequestDTO.getRole().name())
+	            .orElseThrow(() -> new RoleNotFoundException("Role does not exist"));
 
-		if (userRequestDTO.getAddress() != null && !userRequestDTO.getAddress().isEmpty()) {
+	    // 3️⃣ Create User
+	    User user = new User();
+	    user.setUserName(userRequestDTO.getUserName());
+	    user.setEmail(userRequestDTO.getEmail());
+	    user.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
+	    user.setPhone(userRequestDTO.getPhone());
+	    user.setRole(roleEntity);
 
-			List<Address> addressList = userRequestDTO.getAddress().stream().map(dto -> {
-				Address address = new Address();
-				address.setHouseNumber(dto.getHouseNumber());
-				address.setStreet(dto.getStreet());
-				address.setArea(dto.getArea());
-				address.setCity(dto.getCity());
-				address.setState(dto.getState());
-				address.setPincode(dto.getPincode());
-				address.setLatitude(dto.getLatitude());
-				address.setLongitude(dto.getLongitude());
-				return address;
-			}).collect(Collectors.toList());
+	    // 4️⃣ Address list
+	    List<Address> addressList = new ArrayList<>();
 
-			user.setAddress(addressList);
-		}
+	    for (AddressRequestDTO addrDTO : userRequestDTO.getAddress()) {
 
-		user = userRepository.save(user);
+	        Address address = new Address();
+	        address.setHouseNumber(addrDTO.getHouseNumber());
+	        address.setStreet(addrDTO.getStreet());
+	        address.setArea(addrDTO.getArea());
+	        address.setCity(addrDTO.getCity());
+	        address.setState(addrDTO.getState());
+	        address.setPincode(addrDTO.getPincode());
 
-		return modelMapper.map(user, UserResponseDTO.class);
+	        // 5️⃣ Build address for LocationIQ
+	        String fullAddress = buildFullAddress(addrDTO);
+	        System.out.println("Geocoding address: " + fullAddress);
+
+	        // 6️⃣ LocationIQ API call (SAFE)
+	        double[] latLng = locationIQGeocodingService.getLatLong(fullAddress);
+
+	        address.setLatitude(latLng[0]);
+	        address.setLongitude(latLng[1]);
+
+	        address.setUser(user);
+	        addressList.add(address);
+	    }
+
+	    user.setAddress(addressList);
+
+	    // 7️⃣ Save user
+	    userRepository.save(user);
+
+	    // 8️⃣ Return response
+	    return modelMapper.map(user, UserResponseDTO.class);
 	}
+
 
 	public UserResponseDTO filterUser(Long uId) {
 		User user = userRepository.findById(uId).orElseThrow(() -> new UserNotFoundException("user not found"));
@@ -93,5 +172,20 @@ public class UserServiceImpl implements UserService {
 		User updatedUser = userRepository.save(userInDB);
 		return modelMapper.map(updatedUser, UserResponseDTO.class);
 	}
+
+	public String buildFullAddress(AddressRequestDTO dto) {
+	    return String.join(", ",
+	        dto.getHouseNumber(),
+	        dto.getStreet(),
+	        dto.getArea(),
+	        dto.getCity(),
+	        dto.getPincode(),
+	        dto.getState(),
+	        "India"
+	    );
+	}
+
+
+	
 
 }

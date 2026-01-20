@@ -8,6 +8,7 @@ import {
   TextField,
   Typography,
   Paper,
+  Link,
 } from "@mui/material";
 
 function Login() {
@@ -23,25 +24,32 @@ function Login() {
       const response = await axios.post(
         "http://localhost:9059/api/auth/login",
         {
-          email: email,
-          password: password,
+          email,
+          password,
         }
       );
 
-      console.log(response.data);
-      localStorage.setItem("token" , response.data.token);
+      console.log("LOGIN RESPONSE:", response.data);
+
+      const { token, role, userName } = response.data;
+
+      // Store login details
+      localStorage.setItem("token", token);
+      localStorage.setItem("role", role);
+      localStorage.setItem("userName", userName);
 
       alert("Login Successful");
 
-      // 🔴 IMPORTANT: store token (VERY NEEDED)
-      if (response.data.token) {
-        localStorage.setItem("token", response.data.token);
+      // Role-based navigation
+      if (role === "ADMIN") {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/home");
       }
 
-      navigate("/AdminDashboard");
     } catch (error) {
-      console.error(error);
-      alert("Invalid email or password");
+      console.error("Login failed:", error.response?.data || error.message);
+      alert(error.response?.data?.message || "Invalid credentials");
     }
   };
 
@@ -64,7 +72,7 @@ function Login() {
         }}
       >
         <Typography variant="h5" align="center" gutterBottom>
-          Admin Login
+          Login
         </Typography>
 
         <Box component="form" onSubmit={handleSubmit}>
@@ -96,6 +104,23 @@ function Login() {
           >
             Login
           </Button>
+
+          {/* Register Link */}
+          <Typography
+            variant="body2"
+            align="center"
+            sx={{ marginTop: 2 }}
+          >
+            Don’t have an account?{" "}
+            <Link
+              component="button"
+              underline="hover"
+              onClick={() => navigate("/Register")}
+              sx={{ fontWeight: "bold" }}
+            >
+              Register now
+            </Link>
+          </Typography>
         </Box>
       </Paper>
     </Box>

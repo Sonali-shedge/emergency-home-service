@@ -1,7 +1,7 @@
 import React from 'react'
 import Register from './component/Register/Register'
 import Login from './component/Login/Login'
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AdminDashboard from './component/Dashboard/AdminDashboard';
 import ServiceProvider from './component/Dashboard/ServiceProvider';
 import ServiceCategories from './component/Dashboard/ServiceCategories';
@@ -9,28 +9,75 @@ import Home from './component/Home/Home';
 import Navbar from './component/Home/Navbar';
 import Service from './component/Services/Service';
 import ServicesSection from './component/Home/ServicesSection';
+import AdminRoute from './component/Login/AdminRoute';
+import ProtectedRoute from './component/Login/ProtectedRoute';
+import ServiceDetails from './component/Home/ServiceDetails';
+import UserLayout from './component/Layout/UserLayout';
+import BookService from './component/Booking/BookService';
+import MyBookings from './component/Booking/MyBookings';
+import AdminBookings from './component/Booking/AdminBookings';
+import AdminLayout from './component/Layout/AdminLayout';
+
 
 const App = () => {
   return (
-    <>
-    <Router>
+    <BrowserRouter>
       <Routes>
-        {/* Default page → Register */}
-        <Route path="/Home" element={<Home />} />
 
-        {/* Login page */}
-        <Route path="/Login" element={<Login />} />
-         <Route path="/Admindashboard" element={<AdminDashboard />} />
-         <Route path="/ServiceProvider" element={<ServiceProvider />} />
-          <Route path="/ServiceCategories" element={<ServiceCategories />} />
-          <Route path="/Services/:serviceCategoryName" element={<ServicesSection />} />
-             {/* <Route path="/Service" element={<Services />} /> */}
+        <Route path="/" element={<Navigate to="/Login" replace />} />
 
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+
+
+        {/* USER */}
+        <Route element={<ProtectedRoute><UserLayout /></ProtectedRoute>}>
+
+          <Route path="/home" element={<Home />} />
+
+          <Route
+            path="/services/:serviceCategoryName"
+            element={<ServicesSection />}
+          />
+
+          <Route
+            path="/serviceDetails/:serviceId"
+            element={<ServiceDetails />}
+          />
+
+          <Route
+            path="/bookService/:serviceId"
+            element={<BookService />}
+          />
+          <Route
+            path="/myBookings"
+            element={<MyBookings />}
+          />
+
+        </Route>
+        {/* ADMIN */}
+
+        <Route
+          path="/admin/dashboard"
+          element={
+            <AdminRoute>
+              <AdminDashboard />
+            </AdminRoute>
+          }
+        />
+
+        <Route
+          path="/admin/bookings"
+          element={
+            <AdminRoute>
+              <AdminBookings />
+            </AdminRoute>
+          }
+        />
 
       </Routes>
-    </Router>
-    </>
-  )       
+    </BrowserRouter>
+  );
 }
 
 export default App

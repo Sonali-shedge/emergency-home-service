@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 
 public class ServicesResponseDTO {
 	
-	
+	private Long serviceId;
 	
 	private String serviceName;
 	
