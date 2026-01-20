@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.EventManagementSystem.dto.BookingResponseDTO;
+import com.EventManagementSystem.dto.BookingStatusUpdateRequestDTO;
 import com.EventManagementSystem.dto.ServiceCategoryRequestDTO;
 import com.EventManagementSystem.dto.ServiceCategoryResponseDTO;
 import com.EventManagementSystem.dto.ServiceProviderRequestDTO;
@@ -23,6 +25,7 @@ import com.EventManagementSystem.dto.ServiceProviderResponseDTO;
 import com.EventManagementSystem.dto.ServiceResponseDTO;
 import com.EventManagementSystem.dto.ServicesRequestDTO;
 import com.EventManagementSystem.dto.ServicesResponseDTO;
+import com.EventManagementSystem.service.BookingServiceImpl;
 import com.EventManagementSystem.service.CategoryServiceImpl;
 import com.EventManagementSystem.service.ProviderServiceImpl;
 import com.EventManagementSystem.service.RequestServiceImpl;
@@ -30,7 +33,7 @@ import com.EventManagementSystem.service.ServiceImpl;
 
 @RestController
 @RequestMapping("api/admin")
-//@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
 	
 	@Autowired
@@ -44,6 +47,9 @@ public class AdminController {
 	
 	@Autowired
 	private ServiceImpl serviceImpl;
+	
+	@Autowired
+	BookingServiceImpl bookingServiceImpl;
 	
 	@PostMapping("/createServiceCategory")
 	public ResponseEntity<ServiceCategoryResponseDTO> createServiceCategory(
@@ -98,5 +104,16 @@ public class AdminController {
 		return new ResponseEntity<ServiceResponseDTO>(requestServiceImpl.assignProvider(serviceRequestId) , HttpStatus.OK);
 	}
 
+	@GetMapping("/allBookings")
+	public ResponseEntity<List<BookingResponseDTO>> getAllBookings()
+	{
+		return new ResponseEntity<List<BookingResponseDTO>>(bookingServiceImpl.getAllBookings() , HttpStatus.OK);
+	}
+	
+	@PutMapping("/{bookindId}/status")
+	public ResponseEntity<String> updateBookingStatus(@PathVariable Long bookingId , @RequestBody BookingStatusUpdateRequestDTO requestDTO)
+	{
+		return new ResponseEntity<String>(bookingServiceImpl.updateBookingStatus(bookingId , requestDTO) , HttpStatus.OK);
+	}
 }
  

@@ -57,6 +57,7 @@ public class JwtUtils {
 	        return Jwts.builder()
 	                .setClaims(claims)
 	                .setSubject(user.getEmail())
+//	                .setSubject(String.valueOf(user.getUserId()))
 	                .setIssuedAt(new Date(System.currentTimeMillis()))
 	                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
 	                .signWith(getSignKey())

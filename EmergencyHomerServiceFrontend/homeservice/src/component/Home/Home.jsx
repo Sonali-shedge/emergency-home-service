@@ -6,7 +6,7 @@ import ServicesSection from './ServicesSection'
 const Home = () => {
   return (
    <>
-   <Navbar />
+
    <HeroSection/>
    <ServicesSection/>
    </>

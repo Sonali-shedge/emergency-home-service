@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "./AdminDashboard.css";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function AdminDashboard() {
@@ -92,6 +92,7 @@ function AdminDashboard() {
           <li onClick={()=> navigate("/ServiceProvider")} >Service Providers</li>
           <li onClick={()=> navigate("/ServiceCategories")}>Service Categories</li>
           <li>Service Requests</li>
+         <li onClick={()=> navigate("/admin/bookings")}>Bookings</li>
           <li>Reports</li>
           <li className="logout">Logout</li>
         </ul>

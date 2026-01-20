@@ -18,9 +18,7 @@ function Register() {
         area: "",
         city: "",
         state: "",
-        pincode: "",
-        latitude: "",
-        longitude: ""
+        pincode: ""
       }
     ]
   });
@@ -60,7 +58,7 @@ function Register() {
 
     try {
       const response = await axios.post(
-        "http://localhost:9059/api/user/registerUser",// backend url
+        "http://localhost:9059/api/auth/registerUser",// backend url
         {
           userName: user.userName,
           email: user.email,
@@ -94,9 +92,7 @@ function Register() {
             area: "",
             city: "",
             state: "",
-            pincode: "",
-            latitude: "",
-            longitude: ""
+            pincode: ""
           }
         ]
       });
@@ -173,12 +169,6 @@ function Register() {
           onChange={handleAddressChange} required />
 
         <input type="text" name="pincode" placeholder="Pincode"
-          onChange={handleAddressChange} required />
-
-        <input type="number" name="latitude" placeholder="Latitude"
-          onChange={handleAddressChange} required />
-
-        <input type="number" name="longitude" placeholder="Longitude"
           onChange={handleAddressChange} required />
 
         <button type="submit">Register</button>
