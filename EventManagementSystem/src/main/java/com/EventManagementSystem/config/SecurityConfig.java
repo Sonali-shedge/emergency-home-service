@@ -19,58 +19,60 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
-	
-	 @Autowired
-	    private JwtAuthenticationFilter jwtAuthenticationFilter;
-	 @Autowired
-	 private JwtAuthEntryPoint jwtAuthEntryPoint;
 
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
- 
+    @Autowired
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
 
-	    @Bean
-	    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    @Autowired
+    private JwtAuthEntryPoint jwtAuthEntryPoint;
 
-	        http.csrf(csrf -> csrf.disable())
-	            .authorizeHttpRequests(auth -> auth
-	            		.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() 
-	                .requestMatchers("/api/auth/**").permitAll()
-	                .requestMatchers("/login/**").permitAll()
-	                .requestMatchers("/api/user/registerUser").permitAll()
-	                .requestMatchers("/api/service/**").hasAnyRole("ADMIN" , "USER")
-	                .requestMatchers("/api/user/allUser/").hasAuthority("ROLE_ADMIN")
-	                .requestMatchers("/api/service//assignProvider/{serviceRequestId}").hasAnyRole("ADMIN" , "USER")
-	                .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN")
-	                .anyRequest().authenticated()
-	            )
-	            .sessionManagement(session ->
-	                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-	            )
-	            .addFilterBefore(jwtAuthenticationFilter,
-	                    UsernamePasswordAuthenticationFilter.class);
-	        http.exceptionHandling(ex ->
-	        ex.authenticationEntryPoint(jwtAuthEntryPoint)
-	);
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
-	        return http.build();
-	    }
-	    
-	    @Bean
-	    public WebMvcConfigurer corsConfigurer() {
-	        return new WebMvcConfigurer() {
-	            @Override
-	            public void addCorsMappings(CorsRegistry registry) {
-	                registry.addMapping("/**")
-	                        .allowedOrigins("http://localhost:5173")
-	                        .allowedMethods("GET", "POST", "PUT", "DELETE")
-	                        .allowedHeaders("*");
-	            }
-	        };
-	    }
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-	}
+        http.csrf(csrf -> csrf.disable())
+            .cors(cors -> {}) // enable CORS support
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // allow preflight
+                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/login/**").permitAll()
+                .requestMatchers("/api/user/registerUser").permitAll()
+                .requestMatchers("/api/zone/addZone/**").permitAll()
+                .requestMatchers("/api/zone/getAllCities/**").permitAll()
+                .requestMatchers("/api/zone/getZoneByCity/**").permitAll()
+                .requestMatchers("/api/service/**").hasAnyRole("ADMIN", "USER")
+                .requestMatchers("/api/user/allUser/**").hasAuthority("ROLE_ADMIN")
+                .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN")
+                .anyRequest().authenticated()
+            )
+            .sessionManagement(session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
+            .addFilterBefore(jwtAuthenticationFilter,
+                    UsernamePasswordAuthenticationFilter.class)
+            .exceptionHandling(ex ->
+                ex.authenticationEntryPoint(jwtAuthEntryPoint)
+            );
 
+        return http.build();
+    }
 
+    // Global CORS configuration
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedOrigins("http://localhost:5173") // your frontend
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedHeaders("*")
+                        .allowCredentials(true);
+            }
+        };
+    }
+}

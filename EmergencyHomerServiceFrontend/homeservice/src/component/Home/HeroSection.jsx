@@ -8,7 +8,7 @@ const HeroSection = () => {
         {/* LEFT SIDE */}
          <div className="col-md-6 d-flex justify-content-center align-items-center">
           <h1 className="fw-bold display-5 text-center">
-            Emergency Home Services
+            Reliable home services at your doorstep — anytime, anywhere.
           </h1>
         </div>
 

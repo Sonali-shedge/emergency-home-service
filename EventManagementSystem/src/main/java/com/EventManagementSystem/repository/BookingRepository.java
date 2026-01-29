@@ -12,9 +12,15 @@ import com.EventManagementSystem.entity.User;
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 	
-	 List <Booking> findByUserId (Long userId);
+	List<Booking> findByUser_UserId(Long userId);
 	 
-	 Optional <Booking> findByBookingIdAndUserId(Long bookingId , Long userId);
+	 Optional<Booking> findByBookingIdAndUser_UserId(Long bookingId, Long userId);
+	 
+	    List<Booking> findByUserEmailOrderByBookingDateTimeDesc(String email);
+	    
+	    List<Booking> findByServiceProvider_Email(String email);
+	    
+	   
 	 
 	
 }

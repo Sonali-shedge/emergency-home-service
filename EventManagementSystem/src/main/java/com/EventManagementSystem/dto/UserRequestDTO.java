@@ -21,5 +21,10 @@ public class UserRequestDTO {
 //	@Enumerated(EnumType.STRING)
 	private Role role;
 	private List<AddressRequestDTO> address;
+	
+	
+	private Integer experineceInYears;
+    private Long serviceCategoryId;
+    private List<Long> zoneIds;
 
 }

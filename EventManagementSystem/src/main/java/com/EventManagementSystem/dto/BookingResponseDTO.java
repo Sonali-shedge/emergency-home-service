@@ -29,6 +29,8 @@ public class BookingResponseDTO {
 	    private Double price;
 
 	    private String address;
+	    private String providerName;
+	    private String email;
    
 	
 	

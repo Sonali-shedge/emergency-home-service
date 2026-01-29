@@ -18,6 +18,7 @@ const AdminBookings = () => {
     getAllBookings();
   }, []);
 
+  // 🔹 Fetch all bookings
   const getAllBookings = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -32,14 +33,35 @@ const AdminBookings = () => {
       );
 
       setBookings(response.data);
-      console.log(response.data);
+      console.log("All bookings:", response.data);
     } catch (error) {
       console.error("Failed to fetch bookings", error);
     }
   };
 
+  // 🔹 Update booking status
+  const updateBookingStatus = async (bookingId, status) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      await axios.put(
+        `http://localhost:9059/api/admin/${bookingId}/status`,
+        { status },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      getAllBookings(); // refresh table
+    } catch (error) {
+      console.error("Failed to update booking status", error);
+    }
+  };
+
   return (
-    <TableContainer component={Paper}>
+    <TableContainer component={Paper} sx={{ mt: 3 }}>
       <Typography variant="h5" sx={{ m: 2 }}>
         All Bookings (Admin)
       </Typography>
@@ -47,13 +69,13 @@ const AdminBookings = () => {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell><b>Booking ID</b></TableCell>
-            <TableCell><b>User ID</b></TableCell>
-            <TableCell><b>Service</b></TableCell>
-            <TableCell><b>Date & Time</b></TableCell>
-            <TableCell><b>Status</b></TableCell>
-            <TableCell><b>Price</b></TableCell>
-            <TableCell><b>Address</b></TableCell>
+            <TableCell sx={{ fontWeight: "bold" }}>Booking ID</TableCell>
+            <TableCell sx={{ fontWeight: "bold" }}>User ID</TableCell>
+            <TableCell sx={{ fontWeight: "bold" }}>Service</TableCell>
+            <TableCell sx={{ fontWeight: "bold" }}>Date & Time</TableCell>
+            <TableCell sx={{ fontWeight: "bold" }}>Status</TableCell>
+            <TableCell sx={{ fontWeight: "bold" }}>Price</TableCell>
+            <TableCell sx={{ fontWeight: "bold" }}>Address</TableCell>
           </TableRow>
         </TableHead>
 
@@ -66,7 +88,28 @@ const AdminBookings = () => {
               <TableCell>
                 {new Date(booking.bookingDateTime).toLocaleString()}
               </TableCell>
-              <TableCell>{booking.status}</TableCell>
+
+              {/* 🔹 STATUS DROPDOWN */}
+              <TableCell>
+                <select
+                  value={booking.status}
+                  disabled={
+                    booking.status === "COMPLETED" ||
+                    booking.status === "CANCELLED"
+                  }
+                  onChange={(e) =>
+                    updateBookingStatus(
+                      booking.bookingId,
+                      e.target.value
+                    )
+                  }
+                >
+                  <option value="PENDING">PENDING</option>
+                  <option value="CONFIRMED">CONFIRMED</option>
+                  <option value="COMPLETED">COMPLETED</option>
+                  <option value="CANCELLED">CANCELLED</option>
+                </select>
+              </TableCell>
               <TableCell>₹{booking.price}</TableCell>
               <TableCell>{booking.address}</TableCell>
             </TableRow>

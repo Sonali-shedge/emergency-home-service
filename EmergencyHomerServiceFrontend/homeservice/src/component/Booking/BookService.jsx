@@ -9,25 +9,23 @@ const BookService = () => {
   const [service, setService] = useState(null);
   const [bookingDate, setBookingDate] = useState("");
   const [timeSlot, setTimeSlot] = useState("");
-  const [addressId, setAddressId] = useState(""); 
-  const [addresses, setAddresses] = useState([]); // ✅ store addresses from backend
+  const [addressId, setAddressId] = useState("");
+  const [addresses, setAddresses] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // Fetch service details
   useEffect(() => {
     fetchServiceDetails();
     fetchUserAddresses();
   }, [serviceId]);
 
-  // Fetch service details
   const fetchServiceDetails = async () => {
     const token = localStorage.getItem("token");
     try {
       const res = await axios.get(
         `http://localhost:9059/api/admin/getServicesById/${serviceId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       setService(res.data);
     } catch (err) {
@@ -36,26 +34,20 @@ const BookService = () => {
     }
   };
 
-  // Fetch user addresses from backend
   const fetchUserAddresses = async () => {
     const token = localStorage.getItem("token");
     try {
-      const res = await axios.get(
-        "http://localhost:9059/api/user/addresses",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const res = await axios.get("http://localhost:9059/api/user/addresses", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setAddresses(res.data);
-
-      // auto-select first address as default
       if (res.data.length > 0) setAddressId(String(res.data[0].addressId));
     } catch (err) {
       console.error("Failed to fetch addresses", err);
+      setError("Failed to load addresses");
     }
   };
 
-  // Handle booking
   const handleBooking = async () => {
     if (!bookingDate || !timeSlot || !addressId) {
       alert("Please fill all details");
@@ -88,7 +80,7 @@ const BookService = () => {
     setError("");
 
     try {
-      await axios.post(
+      const res = await axios.post(
         "http://localhost:9059/api/user/createBooking",
         bookingPayload,
         {
@@ -99,14 +91,25 @@ const BookService = () => {
         }
       );
 
-      alert("Booking successful!");
-      navigate("/MyBookings");
+      const booking = res.data; // Backend returns full booking info including provider
+      console.log(booking);
+      alert(
+        `Booking successful! Provider assigned: ${booking.providerName}`
+      );
+
+      navigate("/MyBookings", { state: { refresh: true } });
     } catch (err) {
       console.error("Booking error:", err);
       if (err.response) {
-        setError(err.response.data?.message || "Booking failed");
+        const backendMessage =
+          err.response.data && typeof err.response.data === "object"
+            ? err.response.data.message
+            : err.response.data;
+        setError(backendMessage || "Booking failed");
+      } else if (err.request) {
+        setError("No response from server");
       } else {
-        setError("Server not responding");
+        setError("Booking failed: " + err.message);
       }
     } finally {
       setLoading(false);
@@ -155,10 +158,11 @@ const BookService = () => {
           </select>
         </div>
 
-        {/* RADIO BUTTONS FOR ADDRESSES */}
         <div className="mb-3">
           <label className="form-label fw-bold">Select Address</label>
-          {addresses.length === 0 && <p className="text-muted">No saved addresses found</p>}
+          {addresses.length === 0 && (
+            <p className="text-muted">No saved addresses found</p>
+          )}
           {addresses.map((addr) => (
             <div className="form-check mb-2" key={addr.addressId}>
               <input
@@ -170,7 +174,8 @@ const BookService = () => {
                 onChange={(e) => setAddressId(e.target.value)}
               />
               <label className="form-check-label">
-                {addr.houseNumber}, {addr.street}, {addr.area}, {addr.city} – {addr.pincode}
+                {addr.houseNumber}, {addr.street}, {addr.area}, {addr.city} –{" "}
+                {addr.pincode}
               </label>
             </div>
           ))}

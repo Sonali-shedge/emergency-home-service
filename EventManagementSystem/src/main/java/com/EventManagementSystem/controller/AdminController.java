@@ -33,7 +33,7 @@ import com.EventManagementSystem.service.ServiceImpl;
 
 @RestController
 @RequestMapping("api/admin")
-@PreAuthorize("hasRole('ADMIN')")
+//@PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
 	
 	@Autowired
@@ -110,7 +110,7 @@ public class AdminController {
 		return new ResponseEntity<List<BookingResponseDTO>>(bookingServiceImpl.getAllBookings() , HttpStatus.OK);
 	}
 	
-	@PutMapping("/{bookindId}/status")
+	@PutMapping("/{bookingId}/status")
 	public ResponseEntity<String> updateBookingStatus(@PathVariable Long bookingId , @RequestBody BookingStatusUpdateRequestDTO requestDTO)
 	{
 		return new ResponseEntity<String>(bookingServiceImpl.updateBookingStatus(bookingId , requestDTO) , HttpStatus.OK);

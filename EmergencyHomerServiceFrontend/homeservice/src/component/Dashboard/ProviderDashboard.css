@@ -1,0 +1,65 @@
+.provider-dashboard-container {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 10px;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.provider-dashboard-container h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #222;
+}
+
+.provider-booking-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 18px 22px;
+  margin-bottom: 20px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.provider-booking-card h4 {
+  margin-bottom: 10px;
+  color: #1a73e8;
+  font-size: 18px;
+}
+
+.provider-booking-card p {
+  margin: 6px 0;
+  color: #444;
+  font-size: 14px;
+}
+
+.status {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status.PENDING { background-color: #fff4e5; color: #e37400; }
+.status.CONFIRMED { background-color: #e6f4ea; color: #1e8e3e; }
+.status.IN_PROGRESS { background-color: #e5f0fd; color: #0b5394; }
+.status.COMPLETED { background-color: #d9ead3; color: #38761d; }
+.status.CANCELLED { background-color: #fdecea; color: #d93025; }
+
+.action-buttons {
+  margin-top: 12px;
+}
+
+.action-buttons button {
+  padding: 6px 14px;
+  margin-right: 8px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  background-color: #1a73e8;
+  color: #fff;
+}
+
+.action-buttons button:hover {
+  background-color: #155ab6;
+}

@@ -1,0 +1,22 @@
+.stats-card {
+  background: whitesmoke;
+  margin: 100px auto;
+  width: 80%;
+  padding: 50px;
+  border-radius: 30px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  text-align: center;
+}
+
+.stats-card h2 {
+  font-size: 40px;
+  font-weight: bold;
+}
+
+.stats-card p {
+  color: orange;
+  font-size: 12px;
+  letter-spacing: 2px;
+  margin-top: 10px;
+}

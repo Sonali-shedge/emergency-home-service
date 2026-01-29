@@ -17,16 +17,20 @@ import BookService from './component/Booking/BookService';
 import MyBookings from './component/Booking/MyBookings';
 import AdminBookings from './component/Booking/AdminBookings';
 import AdminLayout from './component/Layout/AdminLayout';
+import Customer from './component/HappyCustomer/Customer';
+import ProviderDashboard from './component/Dashboard/ProviderDashboard';
 
 
 const App = () => {
   return (
     <BrowserRouter>
+    
       <Routes>
 
         <Route path="/" element={<Navigate to="/Login" replace />} />
 
         <Route path="/login" element={<Login />} />
+        <Route path="/providerDashboard" element={<ProviderDashboard />} />
         <Route path="/register" element={<Register />} />
 
 
@@ -53,6 +57,12 @@ const App = () => {
             path="/myBookings"
             element={<MyBookings />}
           />
+           <Route
+            path="/happyCustomer"
+            element={<Customer />}
+          />
+
+          
 
         </Route>
         {/* ADMIN */}
@@ -62,6 +72,15 @@ const App = () => {
           element={
             <AdminRoute>
               <AdminDashboard />
+            </AdminRoute>
+          }
+        />
+
+        <Route
+          path="/admin/bookings"
+          element={
+            <AdminRoute>
+              <AdminBookings />
             </AdminRoute>
           }
         />

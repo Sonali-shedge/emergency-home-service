@@ -13,18 +13,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AddressResponseDTO {
-	private Long addressId;
+	 private Long addressId;
 	private String houseNumber;
-	private String street;
-	private String area;
-	private String city;
-	private String state;
-	private String pincode;
-	private Double latitude;
-	private Double longitude;
-	
-//	@ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "user_id", nullable = false)
-//    private User user;
+    private String street;
+    private String city;      // selected from dropdown
+    private String zoneName;  // selected from city-based zones
+    private String state;
+    private String pincode;
 
 }
