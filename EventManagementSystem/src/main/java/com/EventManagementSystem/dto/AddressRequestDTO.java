@@ -1,6 +1,7 @@
 package com.EventManagementSystem.dto;
 
-import jakarta.persistence.Entity;
+import com.EventManagementSystem.entity.Zone;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,12 +12,11 @@ import lombok.NoArgsConstructor;
 
 public class AddressRequestDTO {
 	private String houseNumber;
-	private String street;
-	private String area;
-	private String city;
-	private String state;
-	private String pincode;
-//	private Double latitude;
-//	private Double longitude;
+    private String street;
+    private String city;      // selected from dropdown
+    private String zoneName;  // selected from city-based zones
+    private String state;
+    private String pincode;
+	
 
 }

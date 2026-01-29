@@ -1,0 +1,92 @@
+/* Page container */
+.my-booking-container {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 10px;
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* Page title */
+.my-booking-container h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #222;
+}
+
+/* Booking card */
+.booking-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 18px 22px;
+  margin-bottom: 20px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Hover effect */
+.booking-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+/* Service name */
+.booking-card h4 {
+  margin-bottom: 12px;
+  color: #1a73e8;
+  font-size: 18px;
+}
+
+/* Text rows */
+.booking-card p {
+  margin: 6px 0;
+  color: #444;
+  font-size: 14px;
+}
+
+/* Status badge */
+.status {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Status colors */
+.status.CONFIRMED {
+  background-color: #e6f4ea;
+  color: #1e8e3e;
+}
+
+.status.PENDING {
+  background-color: #fff4e5;
+  color: #e37400;
+}
+
+.status.CANCELLED {
+  background-color: #fdecea;
+  color: #d93025;
+}
+
+/* Empty state */
+.no-bookings {
+  text-align: center;
+  color: #777;
+  margin-top: 40px;
+}
+
+.cancel-btn {
+  margin-top: 12px;
+  padding: 6px 16px;
+  background-color: #d93025;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.cancel-btn:hover {
+  background-color: #b71c1c;
+}
+

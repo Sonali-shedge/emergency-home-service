@@ -18,20 +18,23 @@ import lombok.NoArgsConstructor;
 @Entity
 public class Address {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long addressId;
-	private String houseNumber;
-	private String street;
-	private String area;
-	private String city;
-	private String state;
-	private String pincode;
-	@Column(nullable = false)
-	private Double latitude;
-	@Column(nullable = false)
-	private Double longitude;
+
 	
+	@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long addressId;
+
+    private String houseNumber;
+    private String street;
+//    private String city;
+    private String state;
+    private String pincode;
+
+    // 🔥 Zone-based approach
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "zone_id", nullable = false)
+    private Zone zone;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId", nullable = false)
     private User user;

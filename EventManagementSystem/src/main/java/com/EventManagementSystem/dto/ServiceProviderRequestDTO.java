@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 public class ServiceProviderRequestDTO {
 
 	private String providerName;
+	private String email;
 	private Integer experineceInYears;
 	private AvailabilityStatus availabilityStatus;
 	private Integer serviceRadiusinKm;

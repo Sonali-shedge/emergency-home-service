@@ -14,12 +14,22 @@ import com.EventManagementSystem.dto.UserRequestDTO;
 import com.EventManagementSystem.dto.UserResponseDTO;
 import com.EventManagementSystem.entity.Address;
 import com.EventManagementSystem.entity.Roles;
+import com.EventManagementSystem.entity.ServiceCategory;
+import com.EventManagementSystem.entity.ServiceProvider;
 import com.EventManagementSystem.entity.User;
+import com.EventManagementSystem.entity.Zone;
+import com.EventManagementSystem.enumT.ApprovalStatus;
+import com.EventManagementSystem.enumT.AvailabilityStatus;
 import com.EventManagementSystem.enumT.Role;
 import com.EventManagementSystem.exception.RoleNotFoundException;
 import com.EventManagementSystem.exception.UserNotFoundException;
 import com.EventManagementSystem.repository.RoleRepository;
+import com.EventManagementSystem.repository.ServiceCategoryRepository;
+import com.EventManagementSystem.repository.ServiceProviderRepository;
 import com.EventManagementSystem.repository.UserRepository;
+import com.EventManagementSystem.repository.ZoneRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -35,8 +45,15 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	
+	
 	@Autowired
-	LocationIQGeocodingService locationIQGeocodingService;
+	ZoneRepository zoneRepository;
+	
+	@Autowired
+	ServiceCategoryRepository serviceCategoryRepository;
+	
+	@Autowired
+	ServiceProviderRepository  serviceProviderRepository;
 
 //	@Override
 //	public UserResponseDTO registerUser(UserRequestDTO userRequestDTO) {
@@ -90,65 +107,182 @@ public class UserServiceImpl implements UserService {
 //	    return modelMapper.map(user, UserResponseDTO.class);
 //	
 //	}
+//	
+//	@Override
+//	public UserResponseDTO registerUser(UserRequestDTO userRequestDTO) {
+//
+//	    // 1️⃣ Block SERVICE_PROVIDER registration
+//	    if (userRequestDTO.getRole() == Role.SERVICE_PROVIDER) {
+//	        throw new RuntimeException(
+//	            "Cannot register SERVICE_PROVIDER via this API. Only ADMIN can create providers."
+//	        );
+//	    }
+//
+//	    // 2️⃣ Fetch role
+//	    Roles roleEntity = roleRepository
+//	            .findByRoleName(userRequestDTO.getRole().name())
+//	            .orElseThrow(() -> new RoleNotFoundException("Role does not exist"));
+//
+//	    // 3️⃣ Create User
+//	    User user = new User();
+//	    user.setUserName(userRequestDTO.getUserName());
+//	    user.setEmail(userRequestDTO.getEmail());
+//	    user.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
+//	    user.setPhone(userRequestDTO.getPhone());
+//	    user.setRole(roleEntity);
+//
+//	    // 4️⃣ Address list
+//	    List<Address> addressList = new ArrayList<>();
+//
+//	    for (AddressRequestDTO addrDTO : userRequestDTO.getAddress()) {
+//
+//	        Address address = new Address();
+//	        address.setHouseNumber(addrDTO.getHouseNumber());
+//	        address.setStreet(addrDTO.getStreet());
+//	        address.setArea(addrDTO.getArea());
+//	        address.setCity(addrDTO.getCity());
+//	        address.setState(addrDTO.getState());
+//	        address.setPincode(addrDTO.getPincode());
+//
+//	        // 5️⃣ Build address for LocationIQ
+//	        String fullAddress = buildFullAddress(addrDTO);
+//	        System.out.println("Geocoding address: " + fullAddress);
+//
+//	        // 6️⃣ LocationIQ API call (SAFE)
+//	        double[] latLng = locationIQGeocodingService.getLatLong(fullAddress);
+//
+//	        address.setLatitude(latLng[0]);
+//	        address.setLongitude(latLng[1]);
+//
+//	        address.setUser(user);
+//	        addressList.add(address);
+//	    }
+//
+//	    user.setAddress(addressList);
+//
+//	    // 7️⃣ Save user
+//	    userRepository.save(user);
+//
+//	    // 8️⃣ Return response
+//	    return modelMapper.map(user, UserResponseDTO.class);
+//	}
+
 	
-	@Override
-	public UserResponseDTO registerUser(UserRequestDTO userRequestDTO) {
 
-	    // 1️⃣ Block SERVICE_PROVIDER registration
-	    if (userRequestDTO.getRole() == Role.SERVICE_PROVIDER) {
-	        throw new RuntimeException(
-	            "Cannot register SERVICE_PROVIDER via this API. Only ADMIN can create providers."
-	        );
-	    }
 
-	    // 2️⃣ Fetch role
-	    Roles roleEntity = roleRepository
-	            .findByRoleName(userRequestDTO.getRole().name())
-	            .orElseThrow(() -> new RoleNotFoundException("Role does not exist"));
+@Override
+@Transactional
+public UserResponseDTO registerUser(UserRequestDTO userRequestDTO) {
 
-	    // 3️⃣ Create User
-	    User user = new User();
-	    user.setUserName(userRequestDTO.getUserName());
-	    user.setEmail(userRequestDTO.getEmail());
-	    user.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
-	    user.setPhone(userRequestDTO.getPhone());
-	    user.setRole(roleEntity);
+    // 🔐 1. ROLE-SPECIFIC VALIDATION
+    if (userRequestDTO.getRole() == Role.SERVICE_PROVIDER) {
 
-	    // 4️⃣ Address list
-	    List<Address> addressList = new ArrayList<>();
+        if (userRequestDTO.getExperineceInYears() == null ||
+            userRequestDTO.getServiceCategoryId() == null)
+//            userRequestDTO.getZoneIds() == null ||
+//            userRequestDTO.getZoneIds().isEmpty())
+            {
 
-	    for (AddressRequestDTO addrDTO : userRequestDTO.getAddress()) {
+            throw new RuntimeException(
+                "Experience, Service Category and Zones are required for Service Provider"
+            );
+        }
+    }
 
-	        Address address = new Address();
-	        address.setHouseNumber(addrDTO.getHouseNumber());
-	        address.setStreet(addrDTO.getStreet());
-	        address.setArea(addrDTO.getArea());
-	        address.setCity(addrDTO.getCity());
-	        address.setState(addrDTO.getState());
-	        address.setPincode(addrDTO.getPincode());
+    // 👤 2. CREATE USER
+    User user = new User();
+    user.setUserName(userRequestDTO.getUserName());
+    user.setEmail(userRequestDTO.getEmail());
+    user.setPhone(userRequestDTO.getPhone());
+    user.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
 
-	        // 5️⃣ Build address for LocationIQ
-	        String fullAddress = buildFullAddress(addrDTO);
-	        System.out.println("Geocoding address: " + fullAddress);
+    Roles roleEntity = roleRepository
+            .findByRoleName(userRequestDTO.getRole().name())
+            .orElseThrow(() ->
+                    new RoleNotFoundException("Role does not exist"));
 
-	        // 6️⃣ LocationIQ API call (SAFE)
-	        double[] latLng = locationIQGeocodingService.getLatLong(fullAddress);
+    user.setRole(roleEntity);
 
-	        address.setLatitude(latLng[0]);
-	        address.setLongitude(latLng[1]);
+    // 🏠 3. ADDRESS + ZONE MAPPING
+    List<Address> addressList = new ArrayList<>();
 
-	        address.setUser(user);
-	        addressList.add(address);
-	    }
+    for (AddressRequestDTO addrDTO : userRequestDTO.getAddress()) {
 
-	    user.setAddress(addressList);
+        Address address = new Address();
+        address.setHouseNumber(addrDTO.getHouseNumber());
+        address.setStreet(addrDTO.getStreet());
+        address.setState(addrDTO.getState());
+        address.setPincode(addrDTO.getPincode());
+        address.setUser(user);
 
-	    // 7️⃣ Save user
-	    userRepository.save(user);
+        String city = addrDTO.getCity();
+        String zoneName = addrDTO.getZoneName();
 
-	    // 8️⃣ Return response
-	    return modelMapper.map(user, UserResponseDTO.class);
-	}
+        if (city == null || zoneName == null) {
+            throw new RuntimeException("City and Zone are required");
+        }
+
+        Zone zone = zoneRepository
+                .findByCityIgnoreCaseAndZoneNameIgnoreCase(
+                        city.trim(),
+                        zoneName.trim()
+                )
+                .orElseThrow(() ->
+                        new RuntimeException("Zone not found"));
+
+        address.setZone(zone);
+        addressList.add(address);
+    }
+
+    user.setAddress(addressList);
+
+    // 💾 4. SAVE USER (MANDATORY BEFORE SERVICE PROVIDER)
+    userRepository.save(user);
+
+    // 🛠️ 5. SERVICE PROVIDER CREATION (ROLE BASED)
+    if (userRequestDTO.getRole() == Role.SERVICE_PROVIDER) {
+
+        ServiceProvider serviceProvider = new ServiceProvider();
+
+        serviceProvider.setUser(user);
+        serviceProvider.setProviderName(user.getUserName());
+        serviceProvider.setEmail(user.getEmail());
+        serviceProvider.setExperineceInYears(
+                userRequestDTO.getExperineceInYears()
+        );
+
+        // 🔗 SERVICE CATEGORY
+        ServiceCategory category = serviceCategoryRepository
+                .findById(userRequestDTO.getServiceCategoryId())
+                .orElseThrow(() ->
+                        new RuntimeException("Service category not found"));
+
+        serviceProvider.setServiceCategory(category);
+
+        // 🔗 ZONES
+        List<Zone> zones = zoneRepository
+                .findAllById(userRequestDTO.getZoneIds());
+
+        if (zones.isEmpty()) {
+            throw new RuntimeException("No valid zones found");
+        }
+
+        serviceProvider.setServiceZones(zones);
+
+        // 🔒 DEFAULT SECURITY STATES
+        serviceProvider.setApprovalStatus(ApprovalStatus.PENDING);
+        serviceProvider.setAvailabilityStatus(AvailabilityStatus.UNAVAILABLE);
+        serviceProvider.setIsVerified(false);
+        serviceProvider.setRating(0.0);
+
+        serviceProviderRepository.save(serviceProvider);
+    }
+
+    // 🎯 6. RESPONSE
+    return modelMapper.map(user, UserResponseDTO.class);
+}
+
+
 
 
 	public UserResponseDTO filterUser(Long uId) {
@@ -173,17 +307,8 @@ public class UserServiceImpl implements UserService {
 		return modelMapper.map(updatedUser, UserResponseDTO.class);
 	}
 
-	public String buildFullAddress(AddressRequestDTO dto) {
-	    return String.join(", ",
-	        dto.getHouseNumber(),
-	        dto.getStreet(),
-	        dto.getArea(),
-	        dto.getCity(),
-	        dto.getPincode(),
-	        dto.getState(),
-	        "India"
-	    );
-	}
+	
+
 
 
 	

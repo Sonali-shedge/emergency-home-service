@@ -1,175 +1,280 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import "./Register.css";
 import { useNavigate } from "react-router-dom";
+import "./Register.css";
 
 function Register() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+
+  /* ================= STATE ================= */
+  const [cities, setCities] = useState([]);
+  const [zones, setZones] = useState([]);
+  const [serviceCategories, setServiceCategories] = useState([]);
+  const [selectedCity, setSelectedCity] = useState("");
+
   const [user, setUser] = useState({
     userName: "",
     email: "",
     password: "",
     phone: "",
-    role: { roleName: "USER" }, // default USER
+    role: "USER",
+
+    experineceInYears: "",
+    serviceCategoryId: null,
+    zoneIds: [],
+
     address: [
       {
         houseNumber: "",
         street: "",
-        area: "",
-        city: "",
         state: "",
-        pincode: ""
-      }
-    ]
+        pincode: "",
+        city: "",
+        zoneName: "",
+        zoneId: null,
+      },
+    ],
   });
 
-   // handle user fields
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setUser({ ...user, [name]: value });
-  };
+  /* ================= FETCH INITIAL DATA ================= */
+  useEffect(() => {
+    fetchCities();
+    fetchServiceCategories();
+  }, []);
 
-  // for role
-  const handleRoleChange = (e) => {
-    setUser({
-      ...user,
-      role: { roleName: e.target.value }
-    });
-  };
-
-  // for address
-  const handleAddressChange = (e) => {
-  const { name, value } = e.target;
-
-  const updatedAddress = [...user.address];
-
-  updatedAddress[0][name] =
-    name === "latitude" || name === "longitude"
-      ? value === "" ? "" : parseFloat(value)   // ✅ convert to number
-      : value;
-
-  setUser({ ...user, address: updatedAddress });
-};
-
-
-  // handle form submit
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  const fetchCities = async () => {
     try {
-      const response = await axios.post(
-        "http://localhost:9059/api/auth/registerUser",// backend url
-        {
-          userName: user.userName,
-          email: user.email,
-          password: user.password,
-          phone: user.phone,
-          role: user.role.roleName, // send role as string
-          address: user.address
-        },
-        {
-          headers: {
-            "Content-Type": "application/json"
-          }
-        }
+      const res = await axios.get(
+        "http://localhost:9059/api/zone/getAllCities"
       );
-
-      console.log("User registered:", response.data);
-      alert("Registration Successful");
-      navigate("/Login");
-
-      // reset form
-      setUser({
-        userName: "",
-        email: "",
-        password: "",
-        phone: "",
-        role: { roleName: "USER" },
-        address: [
-          {
-            houseNumber: "",
-            street: "",
-            area: "",
-            city: "",
-            state: "",
-            pincode: ""
-          }
-        ]
-      });
-
+      setCities(res.data);
     } catch (error) {
-      console.error("Registration error:", error.response ? error.response.data : error);
-      alert("Registration Failed Check console for details");
+      console.error("Error fetching cities", error);
     }
   };
 
+  const fetchServiceCategories = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:9059/api/user/getAllServiceCategory"
+      );
+      setServiceCategories(res.data);
+      console.log(res.data);
+    } catch (error) {
+      console.error("Error fetching service categories", error);
+    }
+  };
+
+  /* ================= HANDLERS ================= */
+  const handleChange = (e) => {
+    setUser({ ...user, [e.target.name]: e.target.value });
+  };
+
+  const handleAddressChange = (index, e) => {
+    const updatedAddress = [...user.address];
+    updatedAddress[index][e.target.name] = e.target.value;
+    setUser({ ...user, address: updatedAddress });
+  };
+
+  const handleCityChange = async (city) => {
+    setSelectedCity(city);
+
+    const updatedAddress = [...user.address];
+    updatedAddress[0].city = city;
+    updatedAddress[0].zoneId = null;
+    updatedAddress[0].zoneName = "";
+    setUser({ ...user, address: updatedAddress });
+
+    try {
+      const res = await axios.get(
+        `http://localhost:9059/api/zone/getZoneByCity/${city}`
+      );
+      setZones(res.data);
+    } catch (error) {
+      console.error("Error fetching zones", error);
+    }
+  };
+
+  const handleZoneChange = (zoneId, zoneName) => {
+    const updatedAddress = [...user.address];
+    updatedAddress[0].zoneId = zoneId;
+    updatedAddress[0].zoneName = zoneName;
+    updatedAddress[0].city = selectedCity;
+
+    setUser({
+      ...user,
+      address: updatedAddress,
+      zoneIds: [zoneId],
+    });
+  };
+
+  /* ================= SUBMIT ================= */
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const addr = user.address[0];
+    if (!addr.city || !addr.zoneId) {
+      alert("Please select city and zone");
+      return;
+    }
+
+    if (user.role === "SERVICE_PROVIDER") {
+      if (!user.experineceInYears || !user.serviceCategoryId) {
+        alert("Please select service category and experience");
+        return;
+      }
+    }
+
+    try {
+      await axios.post(
+        "http://localhost:9059/api/auth/registerUser",
+        user,
+        { headers: { "Content-Type": "application/json" } }
+      );
+
+      alert("Registration Successful");
+      navigate("/login");
+    } catch (error) {
+      console.error("Registration Error", error.response?.data || error);
+      alert("Registration Failed");
+    }
+  };
+
+  /* ================= UI ================= */
   return (
     <div className="register-container">
-      <h2>User Registration</h2>
+      <h2>Register</h2>
 
       <form onSubmit={handleSubmit}>
-
+        {/* BASIC INFO */}
         <input
-          type="text"
           name="userName"
           placeholder="User Name"
-          value={user.userName}
           onChange={handleChange}
           required
         />
 
         <input
-          type="email"
           name="email"
+          type="email"
           placeholder="Email"
-          value={user.email}
           onChange={handleChange}
           required
         />
 
         <input
-          type="password"
           name="password"
+          type="password"
           placeholder="Password"
-          value={user.password}
           onChange={handleChange}
           required
         />
 
         <input
-          type="text"
           name="phone"
           placeholder="Phone"
-          value={user.phone}
           onChange={handleChange}
           required
         />
 
         {/* ROLE */}
-        <select value={user.role.roleName} onChange={handleRoleChange} required>
-          <option value="USER">USER</option>
-          <option value="ADMIN">ADMIN</option>
+        <select name="role" value={user.role} onChange={handleChange}>
+          <option value="USER">User</option>
+          <option value="SERVICE_PROVIDER">Service Provider</option>
         </select>
 
-        <h4>Address</h4>
+        {/* SERVICE PROVIDER EXTRA */}
+        {user.role === "SERVICE_PROVIDER" && (
+          <>
+            <select
+              value={user.serviceCategoryId || ""}
+              onChange={(e) =>
+                setUser({
+                  ...user,
+                  serviceCategoryId: Number(e.target.value),
+                })
+              }
+              required
+            >
+              <option value="">Select Service Category</option>
+              {serviceCategories.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.categoryName}
+                </option>
+              ))}
+            </select>
 
-        <input type="text" name="houseNumber" placeholder="House Number"
-          onChange={handleAddressChange} required />
+            <input
+              type="number"
+              name="experineceInYears"
+              placeholder="Experience (Years)"
+              onChange={handleChange}
+              required
+            />
+          </>
+        )}
 
-        <input type="text" name="street" placeholder="Street"
-          onChange={handleAddressChange} required />
+        {/* ADDRESS */}
+        <input
+          name="houseNumber"
+          placeholder="House Number"
+          onChange={(e) => handleAddressChange(0, e)}
+          required
+        />
 
-        <input type="text" name="area" placeholder="Area"
-          onChange={handleAddressChange} required />
+        <input
+          name="street"
+          placeholder="Street"
+          onChange={(e) => handleAddressChange(0, e)}
+          required
+        />
 
-        <input type="text" name="city" placeholder="City"
-          onChange={handleAddressChange} required />
+        {/* CITY */}
+        <select
+          value={selectedCity}
+          onChange={(e) => handleCityChange(e.target.value)}
+          required
+        >
+          <option value="">Select City</option>
+          {cities.map((city, i) => (
+            <option key={i} value={city}>
+              {city}
+            </option>
+          ))}
+        </select>
 
-        <input type="text" name="state" placeholder="State"
-          onChange={handleAddressChange} required />
+        {/* ZONE */}
+        <select
+          value={user.address[0].zoneId || ""}
+          onChange={(e) => {
+            const z = zones.find(
+              (zone) => zone.zoneId === Number(e.target.value)
+            );
+            if (z) handleZoneChange(z.zoneId, z.zoneName);
+          }}
+          required
+        >
+          <option value="">Select Zone</option>
+          {zones.map((zone) => (
+            <option key={zone.zoneId} value={zone.zoneId}>
+              {zone.zoneName}
+            </option>
+          ))}
+        </select>
 
-        <input type="text" name="pincode" placeholder="Pincode"
-          onChange={handleAddressChange} required />
+        <input
+          name="state"
+          placeholder="State"
+          onChange={(e) => handleAddressChange(0, e)}
+          required
+        />
+
+        <input
+          name="pincode"
+          placeholder="Pincode"
+          onChange={(e) => handleAddressChange(0, e)}
+          required
+        />
 
         <button type="submit">Register</button>
       </form>

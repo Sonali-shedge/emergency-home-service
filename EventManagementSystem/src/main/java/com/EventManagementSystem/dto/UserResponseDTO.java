@@ -24,6 +24,6 @@ public class UserResponseDTO {
 	//private String phone;
 	//@Enumerated(EnumType.STRING)
 	//private roleType role;
-	private List<AddressRequestDTO> address;
+	private List<AddressResponseDTO> address;
 
 }

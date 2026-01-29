@@ -18,6 +18,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import lombok.AllArgsConstructor;
@@ -49,9 +52,12 @@ public class User implements UserDetails {
 	@JoinColumn(name = "userId")
 	private List<Address> address = new ArrayList<>();
 
-	@ManyToOne(fetch = FetchType.EAGER ,  cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "role_id")
 	private Roles role;
+	
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private ServiceProvider serviceProvider;
 
 	@PrePersist
 	public void onCreate() {
