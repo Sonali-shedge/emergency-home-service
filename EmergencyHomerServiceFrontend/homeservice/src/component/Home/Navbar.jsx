@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./Navbar.css";
+import logo from "../../assets/logo.png";
 import {
   FaMapMarkerAlt,
   FaSearch,
@@ -50,9 +51,10 @@ const Navbar = () => {
     <nav className="navbar">
       {/* LEFT SECTION */}
       <div className="navbar-left">
-        <div className="logo">
-          <span className="logo-text">FixAtHome</span>
-        </div>
+       <div className="logo">
+  <img src={logo} alt="FixAtHome Logo" />
+</div>
+
 
         <ul className="nav-links">
           {/* HOME */}

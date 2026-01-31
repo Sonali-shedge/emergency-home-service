@@ -6,8 +6,10 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import com.EventManagementSystem.dto.BookingResponseDTO;
 import com.EventManagementSystem.entity.Booking;
-import com.EventManagementSystem.entity.User;
+import com.EventManagementSystem.entity.ServiceProvider;
+import com.EventManagementSystem.enumT.BookingStatus;
 
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Long> {
@@ -20,7 +22,14 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 	    
 	    List<Booking> findByServiceProvider_Email(String email);
 	    
+	    List<Booking> findByServiceProviderAndStatusInOrderByBookingDateTimeAsc(
+	            ServiceProvider provider,
+	            List<BookingStatus> statusList
+	    );
+	
+	}
+	    
 	   
 	 
 	
-}
+

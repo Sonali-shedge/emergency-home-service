@@ -109,9 +109,9 @@ public class BookingServiceImpl implements BookingService {
 		        zone.getCity() + " - " +        // ✅ Pune
 		        address.getPincode()
 		);
-		notificationServiceImpl.createNotification(user.getUserId(),
-				"Your booking has been created and provider assigned: "
-						+ savedBooking.getServiceProvider().getProviderName());
+//		notificationServiceImpl.createNotification(user.getUserId(),
+//				"Your booking has been created and provider assigned: "
+//						+ savedBooking.getServiceProvider().getProviderName());
 
 		return response;
 	}
@@ -144,47 +144,45 @@ public class BookingServiceImpl implements BookingService {
 
 	private Booking assignProviderAutomatically(Booking savedBooking) {
 
-		Zone zone = savedBooking.getAddress().getZone();
-		System.out.println("zone from assignProvider" +zone);
+	    Zone zone = savedBooking.getAddress().getZone();
+	    if (zone == null) {
+	        throw new RuntimeException("Booking address does not have a zone assigned!");
+	    }
 
-		if (zone == null) {
-			throw new RuntimeException("Booking address does not have a zone assigned!");
-		
-		}
-		Long categoryId = savedBooking.getService().getServiceCategory().getServiceCategoryId();
-		System.out.println("booking service category id" +categoryId);
+	    Long categoryId =
+	        savedBooking.getService()
+	            .getServiceCategory()
+	            .getServiceCategoryId();
 
-		List<ServiceProvider> availableProviders = serviceProviderRepository.findAvailableProviders(
-		    zone.getZoneId(),
-		    categoryId,
-		    AvailabilityStatus.AVAILABLE
-		);
+	    List<ServiceProvider> availableProviders =
+	        serviceProviderRepository.findAvailableProviders(
+	            zone.getZoneId(),
+	            categoryId,
+	            AvailabilityStatus.AVAILABLE
+	        );
 
-		
-		
+	    // 🚫 No provider available
+	    if (availableProviders == null || availableProviders.isEmpty()) {
+	        savedBooking.setServiceProvider(null);
+	        return bookingRepository.save(savedBooking);
+	    }
 
-		// 2️⃣ Find available providers in this zone for the service category
-//		List<ServiceProvider> availableProviders = serviceProviderRepository.findAvailableProviders(zone.getZoneId(),
-//				savedBooking.getService().getServiceCategory().getServiceCategoryId() , AvailabilityStatus.AVAILABLE);
-		System.out.println("available providers " +availableProviders);
-		System.out.println("provider count" +availableProviders.size());
+	    // ✅ Pick provider (basic logic: first one)
+	    ServiceProvider provider = availableProviders.get(0);
 
-		if (availableProviders.isEmpty()) {
-			throw new RuntimeException("No available provider in this zone for this service");
-		}
+	    // Optional: mark provider unavailable
+	    provider.setAvailabilityStatus(AvailabilityStatus.UNAVAILABLE);
+	    serviceProviderRepository.save(provider);
 
-		// 3️⃣ Assign first provider
-		ServiceProvider provider = availableProviders.get(0);
-		savedBooking.setServiceProvider(provider);
-		savedBooking.setStatus(BookingStatus.CONFIRMED);
+	    // ✅ Assign provider to booking
+	    savedBooking.setServiceProvider(provider);
 
-		// 4️⃣ Update provider status
-		provider.setAvailabilityStatus(AvailabilityStatus.BUSY);
-		serviceProviderRepository.save(provider);
-
-		// 5️⃣ Save updated booking
-		return bookingRepository.save(savedBooking);
+	    return bookingRepository.save(savedBooking); // 🔥 REQUIRED
 	}
+
+		
+
+
 
 	@Override
 	public String cancelBooking(Long bookingId, String email) {

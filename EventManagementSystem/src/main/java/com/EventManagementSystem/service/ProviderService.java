@@ -15,6 +15,13 @@ public interface ProviderService {
 	
 	public List<BookingResponseDTO> getProviderBookings(String email); 
 	
+	public void acceptBooking(Long bookingId, String name) ;
+	
+	public void rejectBooking(Long bookingId, String name) ;
+	
+	public void completeBooking(Long bookingId, String name);
+	
+	
 	
 
 }

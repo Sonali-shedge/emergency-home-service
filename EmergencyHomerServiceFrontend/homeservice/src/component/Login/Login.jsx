@@ -17,41 +17,45 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    try {
-      const response = await axios.post(
-        "http://localhost:9059/api/auth/login",
-        {
-          email,
-          password,
-        }
-      );
+  try {
+    const response = await axios.post(
+      "http://localhost:9059/api/auth/login",
+      { email, password }
+    );
 
-      console.log("LOGIN RESPONSE:", response.data);
+    console.log("LOGIN RESPONSE:", response.data);
 
-      const { token, role, userName } = response.data;
+   const { token, role, userName, providerId } = response.data;
 
-      // Store login details
-      localStorage.setItem("token", token);
-      localStorage.setItem("role", role);
-      localStorage.setItem("userName", userName);
+    // Store login details
+    localStorage.setItem("token", token);
+    localStorage.setItem("role", role);
+    localStorage.setItem("userName", userName);
+    console.log("ROLE TYPE:", typeof role, role);
 
-      alert("Login Successful");
+    alert("Login Successful");
 
-      // Role-based navigation
-      if (role === "ADMIN") {
-        navigate("/admin/dashboard");
-      } else {
-        navigate("/home");
-      }
-
-    } catch (error) {
-      console.error("Login failed:", error.response?.data || error.message);
-      alert(error.response?.data?.message || "Invalid credentials");
+    // Role-based navigation
+    if (role === "ADMIN") {
+      navigate("/admin/dashboard");
+    } 
+   else if (role === "SERVICE_PROVIDER") {
+  localStorage.setItem("providerId", providerId);
+  navigate("/service-provider/dashboard");
+}
+    else {
+      navigate("/home");
     }
-  };
+
+  } catch (error) {
+    console.error("Login failed:", error.response?.data || error.message);
+    alert(error.response?.data?.message || "Invalid credentials");
+  }
+};
+
 
   return (
     <Box

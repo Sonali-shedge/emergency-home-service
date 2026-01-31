@@ -6,31 +6,32 @@ import AdminDashboard from './component/Dashboard/AdminDashboard';
 import ServiceProvider from './component/Dashboard/ServiceProvider';
 import ServiceCategories from './component/Dashboard/ServiceCategories';
 import Home from './component/Home/Home';
-import Navbar from './component/Home/Navbar';
-import Service from './component/Services/Service';
+
 import ServicesSection from './component/Home/ServicesSection';
-import AdminRoute from './component/Login/AdminRoute';
+
 import ProtectedRoute from './component/Login/ProtectedRoute';
 import ServiceDetails from './component/Home/ServiceDetails';
 import UserLayout from './component/Layout/UserLayout';
 import BookService from './component/Booking/BookService';
 import MyBookings from './component/Booking/MyBookings';
 import AdminBookings from './component/Booking/AdminBookings';
-import AdminLayout from './component/Layout/AdminLayout';
+import ServiceProviderDashboard from './component/Dashboard/ServiceProviderDashboard';
 import Customer from './component/HappyCustomer/Customer';
-import ProviderDashboard from './component/Dashboard/ProviderDashboard';
+
+import NewAndNoteworthy from './component/Home/NewAndNoteworthy';
+
 
 
 const App = () => {
   return (
     <BrowserRouter>
-    
+
       <Routes>
 
         <Route path="/" element={<Navigate to="/Login" replace />} />
 
         <Route path="/login" element={<Login />} />
-        <Route path="/providerDashboard" element={<ProviderDashboard />} />
+        {/* <Route path="/providerDashboard" element={<ProviderDashboard />} /> */}
         <Route path="/register" element={<Register />} />
 
 
@@ -57,42 +58,27 @@ const App = () => {
             path="/myBookings"
             element={<MyBookings />}
           />
-           <Route
+          <Route
             path="/happyCustomer"
             element={<Customer />}
           />
+          <Route
+            path="/NewAndNoteworthy"
+            element={<NewAndNoteworthy />}
+          />
 
-          
+
 
         </Route>
         {/* ADMIN */}
 
-        <Route
-          path="/admin/dashboard"
-          element={
-            <AdminRoute>
-              <AdminDashboard />
-            </AdminRoute>
-          }
-        />
-
-        <Route
-          path="/admin/bookings"
-          element={
-            <AdminRoute>
-              <AdminBookings />
-            </AdminRoute>
-          }
-        />
-
-        <Route
-          path="/admin/bookings"
-          element={
-            <AdminRoute>
-              <AdminBookings />
-            </AdminRoute>
-          }
-        />
+        <Route path="/admin/dashboard"  element={ <AdminDashboard />  } />
+        <Route path="/service-categories"    element={<ServiceCategories />}  />
+        <Route path="/admin/bookings"   element={    <AdminBookings />   }  />
+       <Route  path="/admin/bookings"element={  <AdminBookings />    }    />
+        
+        <Route      path="/service-provider/dashboard"    element={  <ServiceProviderDashboard />   } />
+        <Route     path="/service-provider"      element={       <ServiceProvider />       }    />
 
       </Routes>
     </BrowserRouter>

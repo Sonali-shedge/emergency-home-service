@@ -59,7 +59,6 @@ function Register() {
         "http://localhost:9059/api/user/getAllServiceCategory"
       );
       setServiceCategories(res.data);
-      console.log(res.data);
     } catch (error) {
       console.error("Error fetching service categories", error);
     }
@@ -83,7 +82,8 @@ function Register() {
     updatedAddress[0].city = city;
     updatedAddress[0].zoneId = null;
     updatedAddress[0].zoneName = "";
-    setUser({ ...user, address: updatedAddress });
+
+    setUser({ ...user, address: updatedAddress, zoneIds: [] });
 
     try {
       const res = await axios.get(
@@ -113,6 +113,7 @@ function Register() {
     e.preventDefault();
 
     const addr = user.address[0];
+
     if (!addr.city || !addr.zoneId) {
       alert("Please select city and zone");
       return;
@@ -150,6 +151,7 @@ function Register() {
         <input
           name="userName"
           placeholder="User Name"
+          value={user.userName}
           onChange={handleChange}
           required
         />
@@ -158,6 +160,7 @@ function Register() {
           name="email"
           type="email"
           placeholder="Email"
+          value={user.email}
           onChange={handleChange}
           required
         />
@@ -166,6 +169,7 @@ function Register() {
           name="password"
           type="password"
           placeholder="Password"
+          value={user.password}
           onChange={handleChange}
           required
         />
@@ -173,6 +177,7 @@ function Register() {
         <input
           name="phone"
           placeholder="Phone"
+          value={user.phone}
           onChange={handleChange}
           required
         />
@@ -198,8 +203,11 @@ function Register() {
             >
               <option value="">Select Service Category</option>
               {serviceCategories.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.categoryName}
+                <option
+                  key={cat.serviceCategoryId}
+                  value={cat.serviceCategoryId}
+                >
+                  {cat.serviceCategoryName}
                 </option>
               ))}
             </select>
@@ -208,6 +216,7 @@ function Register() {
               type="number"
               name="experineceInYears"
               placeholder="Experience (Years)"
+              value={user.experineceInYears}
               onChange={handleChange}
               required
             />

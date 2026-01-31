@@ -89,8 +89,8 @@ function AdminDashboard() {
         <ul>
           <li>Dashboard</li>
           <li>Manage Users</li>
-          <li onClick={()=> navigate("/ServiceProvider")} >Service Providers</li>
-          <li onClick={()=> navigate("/ServiceCategories")}>Service Categories</li>
+          <li onClick={()=> navigate("/service-provider")} >Service Providers</li>
+          <li onClick={()=> navigate("/service-categories")}>Service Categories</li>
           <li>Service Requests</li>
          <li onClick={()=> navigate("/admin/bookings")}>Bookings</li>
           <li>Reports</li>

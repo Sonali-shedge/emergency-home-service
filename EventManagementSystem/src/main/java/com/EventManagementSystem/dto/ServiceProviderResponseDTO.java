@@ -1,5 +1,7 @@
 package com.EventManagementSystem.dto;
 
+import java.util.List;
+
 import com.EventManagementSystem.entity.ServiceCategory;
 import com.EventManagementSystem.enumT.AvailabilityStatus;
 
@@ -19,7 +21,10 @@ public class ServiceProviderResponseDTO {
 	private Integer serviceRadiusinKm;
 	private Double rating;
 	private Boolean isVerified;
+	private String phone;
 
-	private Long serviceCategoryId;
+	
+    private Long serviceCategoryId;
+    private List<Long> zoneIds;
 
 }

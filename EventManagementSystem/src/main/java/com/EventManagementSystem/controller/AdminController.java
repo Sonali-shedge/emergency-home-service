@@ -63,6 +63,8 @@ public class AdminController {
 				categoryServiceImpl.createServiceCategory(serviceCategoryRequestDTO), HttpStatus.CREATED);
 	}
 	
+	
+	
 	@PostMapping("/createServiceProvider")
 	public ResponseEntity<ServiceProviderResponseDTO> createServiceProvider(
 			@RequestBody ServiceProviderRequestDTO serviceProviderRequestDTO) {
