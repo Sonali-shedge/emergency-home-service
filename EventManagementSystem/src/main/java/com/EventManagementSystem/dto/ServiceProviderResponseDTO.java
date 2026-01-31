@@ -1,10 +1,7 @@
 package com.EventManagementSystem.dto;
 
 import java.util.List;
-
-import com.EventManagementSystem.entity.ServiceCategory;
 import com.EventManagementSystem.enumT.AvailabilityStatus;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,17 +11,20 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ServiceProviderResponseDTO {
 
-	private String providerName;
-	private String email;
-	private Integer experineceInYears;
-	private AvailabilityStatus availabilityStatus;
-	private Integer serviceRadiusinKm;
-	private Double rating;
-	private Boolean isVerified;
-	private String phone;
+    private Long providerId;
+    private String providerName;
+    private String email;
+    private String phone;
+    private Boolean blocked;
+    private Integer experienceInYears;
 
-	
-    private Long serviceCategoryId;
-    private List<Long> zoneIds;
+    private AvailabilityStatus availabilityStatus;
+    private String approvalStatus;
 
+    private Double rating;
+    private Boolean isVerified;
+
+    private Long serviceCategoryId;  // ID of the service category
+    private String categoryName;      // Name of the service category
+    private List<String> zoneNames;   // Names of zones assigned to provider
 }

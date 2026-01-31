@@ -64,15 +64,29 @@ const handleSubmit = async (e) => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        background: "linear-gradient(135deg, #1976d2, #42a5f5)",
+        // background: "linear-gradient(135deg, #1976d2, #42a5f5)",
+        backgroundImage: "url('/Background/login.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+
+        "&::before": {
+          content: '""',
+          position: "absolute",
+          inset: 0,
+          backdropFilter: "blur(5px)",
+          backgroundColor: "rgba(255,255,255,0.1)",
+        },
       }}
     >
       <Paper
         elevation={6}
         sx={{
+          zIndex: 1,
           padding: 4,
           width: 350,
           borderRadius: 2,
+          backgroundColor: "rgba(255, 255, 255, 0.9)",
         }}
       >
         <Typography variant="h5" align="center" gutterBottom>

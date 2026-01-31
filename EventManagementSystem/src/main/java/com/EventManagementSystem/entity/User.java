@@ -10,6 +10,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -43,10 +44,16 @@ public class User implements UserDetails {
 	private String password;
 
 	private String phone;
+	
+//	private Boolean blocked;
 
 	private LocalDateTime createdAt;
 
 	private LocalDateTime updatedAt;
+	
+	@Column(nullable = false)
+	private Boolean blocked = false;
+
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "userId")
@@ -63,6 +70,7 @@ public class User implements UserDetails {
 	public void onCreate() {
 		this.createdAt = LocalDateTime.now();
 		this.updatedAt = LocalDateTime.now();
+		this.blocked = false;
 	}
 
 	@PreUpdate
@@ -70,18 +78,31 @@ public class User implements UserDetails {
 		this.updatedAt = LocalDateTime.now();
 	}
 
+	
+	
+	 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return List.of(new SimpleGrantedAuthority("ROLE" +role.getRoleName()));
 	}
 
-	@Override
-	public String getUsername() {return null;};
-		
-
-	
 	public String getUserName() {
-		
-		return this.userName=userName;
+	    return this.userName;
 	}
+
+	public Boolean getBlocked() {
+	    return this.blocked;
+	}
+
+	 @Override
+	    public boolean isAccountNonLocked() {
+	        return !this.blocked;
+	    }
+
+	 @Override
+	 public String getUsername() {
+		// TODO Auto-generated method stub
+		return null;
+	 }
+	
 }

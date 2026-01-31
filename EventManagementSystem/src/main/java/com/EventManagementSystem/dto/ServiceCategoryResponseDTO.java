@@ -8,9 +8,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ServiceCategoryResponseDTO {
-	private Long serviceCategoryId;
-	private String serviceCategoryName;
-	private String description;
-	private Boolean isActive;
-
+    private Long serviceCategoryId;  
+    private String serviceCategoryName;
+    private String description;
+    private Boolean isActive;
 }

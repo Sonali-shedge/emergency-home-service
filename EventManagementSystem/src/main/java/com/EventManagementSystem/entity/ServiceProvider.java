@@ -65,6 +65,8 @@ public class ServiceProvider {
     
     private String email;
     
+    private String phone;
+    
     private Integer experineceInYears;
 
     @Enumerated(EnumType.STRING)
@@ -88,9 +90,10 @@ public class ServiceProvider {
     )
     private List<Zone> serviceZones;
     
-    @OneToOne(fetch = FetchType.LAZY , cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
+
     
     @Enumerated(EnumType.STRING)
     private ApprovalStatus approvalStatus;

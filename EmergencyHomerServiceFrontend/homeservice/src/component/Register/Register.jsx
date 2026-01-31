@@ -18,11 +18,9 @@ function Register() {
     password: "",
     phone: "",
     role: "USER",
-
     experineceInYears: "",
     serviceCategoryId: null,
     zoneIds: [],
-
     address: [
       {
         houseNumber: "",
@@ -44,9 +42,7 @@ function Register() {
 
   const fetchCities = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:9059/api/zone/getAllCities"
-      );
+      const res = await axios.get("http://localhost:9059/api/zone/getAllCities");
       setCities(res.data);
     } catch (error) {
       console.error("Error fetching cities", error);
@@ -55,9 +51,8 @@ function Register() {
 
   const fetchServiceCategories = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:9059/api/user/getAllServiceCategory"
-      );
+      const res = await axios.get("http://localhost:9059/api/user/getAllServiceCategory");
+      console.log("Service Categories:", res.data); // Added for debugging
       setServiceCategories(res.data);
     } catch (error) {
       console.error("Error fetching service categories", error);
@@ -77,18 +72,14 @@ function Register() {
 
   const handleCityChange = async (city) => {
     setSelectedCity(city);
-
     const updatedAddress = [...user.address];
     updatedAddress[0].city = city;
     updatedAddress[0].zoneId = null;
     updatedAddress[0].zoneName = "";
-
     setUser({ ...user, address: updatedAddress, zoneIds: [] });
 
     try {
-      const res = await axios.get(
-        `http://localhost:9059/api/zone/getZoneByCity/${city}`
-      );
+      const res = await axios.get(`http://localhost:9059/api/zone/getZoneByCity/${city}`);
       setZones(res.data);
     } catch (error) {
       console.error("Error fetching zones", error);
@@ -100,18 +91,12 @@ function Register() {
     updatedAddress[0].zoneId = zoneId;
     updatedAddress[0].zoneName = zoneName;
     updatedAddress[0].city = selectedCity;
-
-    setUser({
-      ...user,
-      address: updatedAddress,
-      zoneIds: [zoneId],
-    });
+    setUser({ ...user, address: updatedAddress, zoneIds: [zoneId] });
   };
 
   /* ================= SUBMIT ================= */
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const addr = user.address[0];
 
     if (!addr.city || !addr.zoneId) {
@@ -132,7 +117,6 @@ function Register() {
         user,
         { headers: { "Content-Type": "application/json" } }
       );
-
       alert("Registration Successful");
       navigate("/login");
     } catch (error) {
@@ -155,7 +139,6 @@ function Register() {
           onChange={handleChange}
           required
         />
-
         <input
           name="email"
           type="email"
@@ -164,7 +147,6 @@ function Register() {
           onChange={handleChange}
           required
         />
-
         <input
           name="password"
           type="password"
@@ -173,7 +155,6 @@ function Register() {
           onChange={handleChange}
           required
         />
-
         <input
           name="phone"
           placeholder="Phone"
@@ -201,12 +182,11 @@ function Register() {
               }
               required
             >
-              <option value="">Select Service Category</option>
+              <option value="" disabled hidden>
+                Select Service Category
+              </option>
               {serviceCategories.map((cat) => (
-                <option
-                  key={cat.serviceCategoryId}
-                  value={cat.serviceCategoryId}
-                >
+                <option key={cat.serviceCategoryId} value={cat.serviceCategoryId}>
                   {cat.serviceCategoryName}
                 </option>
               ))}
@@ -230,7 +210,6 @@ function Register() {
           onChange={(e) => handleAddressChange(0, e)}
           required
         />
-
         <input
           name="street"
           placeholder="Street"
@@ -256,9 +235,7 @@ function Register() {
         <select
           value={user.address[0].zoneId || ""}
           onChange={(e) => {
-            const z = zones.find(
-              (zone) => zone.zoneId === Number(e.target.value)
-            );
+            const z = zones.find((zone) => zone.zoneId === Number(e.target.value));
             if (z) handleZoneChange(z.zoneId, z.zoneName);
           }}
           required
@@ -277,7 +254,6 @@ function Register() {
           onChange={(e) => handleAddressChange(0, e)}
           required
         />
-
         <input
           name="pincode"
           placeholder="Pincode"

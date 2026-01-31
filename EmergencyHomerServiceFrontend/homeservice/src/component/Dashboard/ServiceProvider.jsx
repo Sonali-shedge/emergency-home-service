@@ -9,6 +9,9 @@ function ServiceProvider() {
   const [error, setError] = useState("");
   const [processingId, setProcessingId] = useState(null);
 
+  const token = localStorage.getItem("token");
+  const role = localStorage.getItem("role"); // must be "ADMIN"
+
   useEffect(() => {
     setLoading(true);
     Promise.all([fetchPendingProviders(), fetchAllProviders()])
@@ -16,89 +19,94 @@ function ServiceProvider() {
       .finally(() => setLoading(false));
   }, []);
 
-  // Fetch pending providers
+  // ---------------- FETCH DATA ----------------
   const fetchPendingProviders = async () => {
     try {
-      const token = localStorage.getItem("token");
       const res = await axios.get(
         "http://localhost:9059/api/provider/providers/pending",
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setPendingProviders(res.data);
-    } catch (err) {
-      console.error("Error fetching pending providers:", err);
+    } catch {
       setError("Failed to load pending providers");
     }
   };
 
-  // Fetch all providers
   const fetchAllProviders = async () => {
     try {
-      const token = localStorage.getItem("token");
       const res = await axios.get(
         "http://localhost:9059/api/admin/getAllServiceProviders",
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setAllProviders(res.data);
-    } catch (err) {
-      console.error("Error fetching all providers:", err);
+    } catch {
       setError("Failed to load all providers");
     }
   };
 
-  // Approve provider
+  // ---------------- ACTIONS ----------------
+  // Approve Provider (ADMIN)
   const approveProvider = async (id) => {
     setProcessingId(id);
     try {
       await axios.post(
         `http://localhost:9059/api/provider/providers/approve/${id}`,
         {},
-        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       alert("Provider approved successfully");
       fetchPendingProviders();
       fetchAllProviders();
-    } catch (err) {
-      console.error("Error approving provider:", err);
+    } catch {
       alert("Failed to approve provider");
     } finally {
       setProcessingId(null);
     }
   };
 
-  // Reject provider
+  // Reject Provider (ADMIN)
   const rejectProvider = async (id) => {
     setProcessingId(id);
     try {
       await axios.post(
         `http://localhost:9059/api/provider/providers/reject/${id}`,
         {},
-        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       alert("Provider rejected successfully");
       fetchPendingProviders();
       fetchAllProviders();
-    } catch (err) {
-      console.error("Error rejecting provider:", err);
+    } catch {
       alert("Failed to reject provider");
     } finally {
       setProcessingId(null);
     }
   };
 
+  // Block / Unblock Provider (ADMIN + APPROVED)
+  const toggleBlock = async (id) => {
+    try {
+      await axios.put(
+        `http://localhost:9059/api/provider/providers/toggle-block/${id}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      alert("Provider block status updated");
+      fetchAllProviders();
+    } catch (err) {
+      alert(err.response?.data || "Only admin can block approved providers");
+    }
+  };
+
+  // ---------------- UI ----------------
   return (
     <div className="service-provider-page">
       <h2>Service Providers Management</h2>
 
-      {/* Loading state */}
       {loading && <p style={{ textAlign: "center" }}>Loading providers...</p>}
+      {!loading && error && <p style={{ color: "red" }}>{error}</p>}
 
-      {/* Error state */}
-      {!loading && error && (
-        <p style={{ textAlign: "center", color: "red" }}>{error}</p>
-      )}
-
-      {/* Pending Providers */}
+      {/* -------- Pending Providers -------- */}
       {!loading && !error && (
         <section>
           <h3>Pending Providers</h3>
@@ -129,20 +137,24 @@ function ServiceProvider() {
                     <td>{p.experienceInYears} yrs</td>
                     <td>{p.approvalStatus}</td>
                     <td>
-                      <button
-                        disabled={processingId === p.providerId}
-                        className="btn-approve"
-                        onClick={() => approveProvider(p.providerId)}
-                      >
-                        Approve
-                      </button>
-                      <button
-                        disabled={processingId === p.providerId}
-                        className="btn-reject"
-                        onClick={() => rejectProvider(p.providerId)}
-                      >
-                        Reject
-                      </button>
+                      {role === "ADMIN" && (
+                        <>
+                          <button
+                            className="btn-approve"
+                            disabled={processingId === p.providerId}
+                            onClick={() => approveProvider(p.providerId)}
+                          >
+                            Approve
+                          </button>
+                          <button
+                            className="btn-reject"
+                            disabled={processingId === p.providerId}
+                            onClick={() => rejectProvider(p.providerId)}
+                          >
+                            Reject
+                          </button>
+                        </>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -152,57 +164,47 @@ function ServiceProvider() {
         </section>
       )}
 
-      {/* All Providers */}
+      {/* -------- All Providers -------- */}
       {!loading && !error && (
         <section style={{ marginTop: "2rem" }}>
           <h3>All Providers</h3>
-          {allProviders.length === 0 ? (
-            <p>No providers found</p>
-          ) : (
-             <table className="provider-table">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Phone</th>
-                  <th>Category</th>
-                  <th>Zones</th>
-                  <th>Experience</th>
-                  <th>Status</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {allProviders.map((p) => (
-                  <tr key={p.providerId}>
-                    <td>{p.providerName}</td>
-                    <td>{p.email}</td>
-                    <td>{p.phone}</td>
-                    <td>{p.categoryName}</td>
-                    <td>{p.zoneNames?.join(", ")}</td>
-                    <td>{p.experienceInYears} yrs</td>
-                    <td>{p.approvalStatus}</td>
-                    <td>
-                      {/* <button
-                        disabled={processingId === p.providerId}
-                        className="btn-approve"
-                        onClick={() => approveProvider(p.providerId)}
-                      >
-                        Approve
-                      </button>
+          <table className="provider-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Category</th>
+                <th>Zones</th>
+                <th>Experience</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {allProviders.map((p) => (
+                <tr key={p.providerId}>
+                  <td>{p.providerName}</td>
+                  <td>{p.email}</td>
+                  <td>{p.phone}</td>
+                  <td>{p.categoryName}</td>
+                  <td>{p.zoneNames?.join(", ")}</td>
+                  <td>{p.experienceInYears} yrs</td>
+                  <td>{p.approvalStatus}</td>
+                  <td>
+                    {role === "ADMIN" && p.approvalStatus === "APPROVED" && (
                       <button
-                        disabled={processingId === p.providerId}
-                        className="btn-reject"
-                        onClick={() => rejectProvider(p.providerId)}
+                        className={p.blocked ? "btn-unblock" : "btn-block"}
+                        onClick={() => toggleBlock(p.providerId)}
                       >
-                        Reject
-                      </button> */}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+                        {p.blocked ? "Unblock" : "Block"}
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </section>
       )}
     </div>

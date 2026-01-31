@@ -45,8 +45,9 @@ const ServicesSection = () => {
 
   return (
     <div className="services-container container mt-4">
+      {/* Display category name */}
       <h2 className="mb-4 text-center text-primary">
-        {serviceCategoryName?.toUpperCase()} 
+        {serviceCategoryName?.toUpperCase()}
       </h2>
 
       <div className="row g-4">
@@ -86,7 +87,7 @@ const ServicesSection = () => {
             </div>
           ))
         ) : (
-          <p className="text-center"></p>
+          <p className="text-center">No services available.</p>
         )}
       </div>
     </div>

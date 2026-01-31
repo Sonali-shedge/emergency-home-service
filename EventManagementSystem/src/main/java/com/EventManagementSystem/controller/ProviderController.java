@@ -6,72 +6,69 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.EventManagementSystem.dto.BookingResponseDTO;
-import com.EventManagementSystem.dto.ServiceProviderAdminDTO;
-import com.EventManagementSystem.entity.ServiceProvider;
+import com.EventManagementSystem.dto.ServiceProviderResponseDTO;
 import com.EventManagementSystem.service.ProviderServiceImpl;
 
 @RestController
 @RequestMapping("/api/provider")
 public class ProviderController {
 
-	@Autowired
-	ProviderServiceImpl providerServiceImpl;
+    @Autowired
+    ProviderServiceImpl providerServiceImpl;
 
-	@GetMapping("/getProviderBookings")
-	public ResponseEntity<List<BookingResponseDTO>> getProviderBookings(Principal principal) {
-		String email = principal.getName();
-		return new ResponseEntity<List<BookingResponseDTO>>(providerServiceImpl.getProviderBookings(email),
-				HttpStatus.OK);
-	}
+    // 🔹 Get bookings for provider
+    @GetMapping("/getProviderBookings")
+    public ResponseEntity<List<BookingResponseDTO>> getProviderBookings(Principal principal) {
+        String email = principal.getName();
+        return new ResponseEntity<>(providerServiceImpl.getProviderBookings(email), HttpStatus.OK);
+    }
 
-	// 1️⃣ Get all pending provider requests
-	@GetMapping("/providers/pending")
-	public ResponseEntity<List<ServiceProviderAdminDTO>> getPendingProviders() {
-		return new ResponseEntity<List<ServiceProviderAdminDTO>>(providerServiceImpl.getPendingProviders(),
-				HttpStatus.OK);
-	}
+    // 🔹 Get all pending provider requests
+    @GetMapping("/providers/pending")
+    public ResponseEntity<List<ServiceProviderResponseDTO>> getPendingProviders() {
+        return ResponseEntity.ok(providerServiceImpl.getPendingProviders());
+    }
 
-	// 2️⃣ Approve provider
-	@PostMapping("/providers/approve/{providerId}")
-	public ResponseEntity<String> approveProvider(@PathVariable Long providerId) {
+    // 🔹 Approve provider
+    @PostMapping("/providers/approve/{providerId}")
+    public ResponseEntity<String> approveProvider(@PathVariable Long providerId) {
+        providerServiceImpl.approveOrRejectProvider(providerId, true);
+        return ResponseEntity.ok("Service provider approved successfully");
+    }
 
-		providerServiceImpl.approveOrRejectProvider(providerId, true);
-		return ResponseEntity.ok("Service provider approved successfully");
-	}
+    // 🔹 Reject provider
+    @PostMapping("/providers/reject/{providerId}")
+    public ResponseEntity<String> rejectProvider(@PathVariable Long providerId) {
+        providerServiceImpl.approveOrRejectProvider(providerId, false);
+        return ResponseEntity.ok("Service provider rejected successfully");
+    }
 
-	// 3️⃣ Reject provider
-	@PostMapping("/providers/reject/{providerId}")
-	public ResponseEntity<String> rejectProvider(@PathVariable Long providerId) {
+    // 🔹 Toggle block/unblock provider
+    @PutMapping("/providers/toggle-block/{id}")
+    public ResponseEntity<String> toggleBlock(@PathVariable Long id) {
+        providerServiceImpl.toggleBlockProvider(id);
+        return ResponseEntity.ok("Provider block status updated");
+    }
 
-		providerServiceImpl.approveOrRejectProvider(providerId, false);
-		return ResponseEntity.ok("Service provider rejected successfully");
-	}
+    // 🔹 Booking actions
+    @PutMapping("/bookings/accept/{bookingId}")
+    public ResponseEntity<String> acceptBooking(@PathVariable Long bookingId, Principal principal) {
+        providerServiceImpl.acceptBooking(bookingId, principal.getName());
+        return ResponseEntity.ok("Booking accepted");
+    }
 
-	@PutMapping("/bookings/accept/{bookingId}")
-	public ResponseEntity<String> acceptBooking(@PathVariable Long bookingId, Principal principal) {
-		providerServiceImpl.acceptBooking(bookingId, principal.getName());
-		return ResponseEntity.ok("Booking accepted");
-	}
+    @PutMapping("/bookings/complete/{bookingId}")
+    public ResponseEntity<String> completeBooking(@PathVariable Long bookingId, Principal principal) {
+        providerServiceImpl.completeBooking(bookingId, principal.getName());
+        return ResponseEntity.ok("Booking marked as completed");
+    }
 
-	@PutMapping("/bookings/complete/{bookingId}")
-	public ResponseEntity<String> completeBooking(@PathVariable Long bookingId, Principal principal) {
-
-		providerServiceImpl.completeBooking(bookingId, principal.getName());
-		return ResponseEntity.ok("Booking marked as completed");
-	}
-
-	/* REJECT BOOKING */
-	@PutMapping("/bookings/reject/{bookingId}")
-	public ResponseEntity<String> rejectBooking(@PathVariable Long bookingId, Principal principal) {
-		providerServiceImpl.rejectBooking(bookingId, principal.getName());
-		return ResponseEntity.ok("Booking rejected");
-	}
+    @PutMapping("/bookings/reject/{bookingId}")
+    public ResponseEntity<String> rejectBooking(@PathVariable Long bookingId, Principal principal) {
+        providerServiceImpl.rejectBooking(bookingId, principal.getName());
+        return ResponseEntity.ok("Booking rejected");
+    }
 }
