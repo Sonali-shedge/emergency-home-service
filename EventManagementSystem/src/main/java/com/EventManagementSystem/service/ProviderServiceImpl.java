@@ -128,7 +128,6 @@ public class ProviderServiceImpl implements ProviderService {
         }).collect(Collectors.toList());
     }
 
-    @Override
     public List<ServiceProviderResponseDTO> getPendingProviders() {
         return serviceProviderRepository.findByApprovalStatus(ApprovalStatus.PENDING)
                 .stream()
@@ -152,7 +151,6 @@ public class ProviderServiceImpl implements ProviderService {
                 }).collect(Collectors.toList());
     }
 
-    @Override
     @Transactional
     public void approveOrRejectProvider(Long providerId, boolean approve) {
         ServiceProvider provider = serviceProviderRepository.findById(providerId)
@@ -174,7 +172,7 @@ public class ProviderServiceImpl implements ProviderService {
         serviceProviderRepository.save(provider);
     }
 
-    @Override
+//    @Override
     @Transactional
     public void toggleBlockProvider(Long providerId) {
         ServiceProvider provider = serviceProviderRepository.findById(providerId)
