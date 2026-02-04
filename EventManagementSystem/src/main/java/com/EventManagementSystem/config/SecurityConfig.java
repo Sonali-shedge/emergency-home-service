@@ -37,16 +37,25 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
             .cors(cors -> {}) // enable CORS support
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // allow preflight
+                // Allow preflight requests
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                // Public endpoints
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/login/**").permitAll()
                 .requestMatchers("/api/user/registerUser").permitAll()
+                .requestMatchers("/api/user/getAllServiceCategory").permitAll()
                 .requestMatchers("/api/zone/addZone/**").permitAll()
                 .requestMatchers("/api/zone/getAllCities/**").permitAll()
                 .requestMatchers("/api/zone/getZoneByCity/**").permitAll()
+                .requestMatchers("/api/provider/**").permitAll()
+                .requestMatchers("/bookings/accept/{bookingId}/**").permitAll()
+
+                // Protected endpoints
                 .requestMatchers("/api/service/**").hasAnyRole("ADMIN", "USER")
                 .requestMatchers("/api/user/allUser/**").hasAuthority("ROLE_ADMIN")
                 .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN")
+
                 .anyRequest().authenticated()
             )
             .sessionManagement(session ->

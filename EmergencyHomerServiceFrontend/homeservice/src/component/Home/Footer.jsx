@@ -1,4 +1,12 @@
+import { useNavigate } from "react-router-dom";
 const Footer = () => {
+
+  const navigate = useNavigate();
+
+  const handleClick = (serviceName) => {
+    // Navigate to the service details page
+    navigate(`/services/${serviceName.toLowerCase()}`);
+  };
   return (
     <footer className="bg-white text-dark pt-5 mt-5 border-top">
       <div className="container">
@@ -17,11 +25,11 @@ const Footer = () => {
           <div className="col-md-4 mb-4">
             <h5 className="text-primary">Our Services</h5>
             <ul className="list-unstyled small">
-              <li>Plumber</li>
-              <li>Electrician</li>
-              <li>AC Repair</li>
-              <li>Fan Repair</li>
-            </ul>
+        <li onClick={() => handleClick("Plumber")} style={{cursor: "pointer"}}>Plumber</li>
+        <li onClick={() => handleClick("Electrician")} style={{cursor: "pointer"}}>Electrician</li>
+        <li onClick={() => handleClick("AC Repair")} style={{cursor: "pointer"}}>AC Repair</li>
+        <li onClick={() => handleClick("Fan Repair")} style={{cursor: "pointer"}}>Fan Repair</li>
+      </ul>
           </div>
 
           {/* Contact */}

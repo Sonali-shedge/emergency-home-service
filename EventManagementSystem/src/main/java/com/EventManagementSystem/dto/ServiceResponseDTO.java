@@ -24,5 +24,7 @@ public class ServiceResponseDTO {
 	//private ServiceCategoryResponseDTO serviceCategory;
 	private String serviceCategoryName;
 	private AddressResponseDTO address;
+	
+
 
 }

@@ -1,11 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./Navbar.css";
-import {
-  FaMapMarkerAlt,
-  FaSearch,
-  FaShoppingCart,
-  FaUser,
-} from "react-icons/fa";
+import logo from "../../assets/logo.png";
+import { FaMapMarkerAlt, FaSearch, FaShoppingCart, FaUser } from "react-icons/fa";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import NotificationBell from "../Notification/NotificationBell";
 
@@ -22,17 +18,13 @@ const Navbar = () => {
   // ✅ Close services dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (
-        serviceRef.current &&
-        !serviceRef.current.contains(event.target)
-      ) {
+      if (serviceRef.current && !serviceRef.current.contains(event.target)) {
         setShowServices(false);
       }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-    return () =>
-      document.removeEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   // ✅ Close dropdown on route change
@@ -50,8 +42,8 @@ const Navbar = () => {
     <nav className="navbar">
       {/* LEFT SECTION */}
       <div className="navbar-left">
-        <div className="logo">
-          <span className="logo-text">FixAtHome</span>
+        <div className="logo" onClick={() => navigate("/Home")}>
+          <img src={logo} alt="FixAtHome Logo" className="logo-img" />
         </div>
 
         <ul className="nav-links">
@@ -69,15 +61,9 @@ const Navbar = () => {
             Services
             {showServices && (
               <ul className="dropdown">
-                <li onClick={() => handleCategoryClick("plumber")}>
-                  Plumber
-                </li>
-                <li onClick={() => handleCategoryClick("electrician")}>
-                  Electrician
-                </li>
-                <li onClick={() => handleCategoryClick("carpenter")}>
-                  Carpenter
-                </li>
+                <li onClick={() => handleCategoryClick("plumber")}>Plumber</li>
+                <li onClick={() => handleCategoryClick("electrician")}>Electrician</li>
+                <li onClick={() => handleCategoryClick("carpenter")}>Carpenter</li>
               </ul>
             )}
           </li>
@@ -98,10 +84,7 @@ const Navbar = () => {
 
         <div className="search-box">
           <FaSearch />
-          <input
-            type="text"
-            placeholder="Search for 'Microwave repair'"
-          />
+          <input type="text" placeholder="Search for 'Microwave repair'" />
         </div>
 
         {/* 🔔 NOTIFICATION BELL */}

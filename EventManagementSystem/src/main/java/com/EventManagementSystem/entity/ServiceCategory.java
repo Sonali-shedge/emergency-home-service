@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 public class ServiceCategory {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long serviceCategoryId;
+	private Long serviceCategoryId; 
 	@Column(unique = true, nullable = false)
 	private String serviceCategoryName;
 	private String description;

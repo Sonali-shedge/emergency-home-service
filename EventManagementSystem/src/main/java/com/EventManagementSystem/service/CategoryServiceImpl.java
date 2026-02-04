@@ -31,13 +31,19 @@ public class CategoryServiceImpl implements CategoryService {
 		return modelMapper.map(savedCategory, ServiceCategoryResponseDTO.class);
 	}
 
-	@Override
-	public List<ServiceCategoryResponseDTO> getAllServiceCategory() {
-		
-	List<ServiceCategory> serviceCategories =	serviceCategoryRepository.findAll();
-		
-		return serviceCategories.stream().map(dto-> modelMapper.map(dto, ServiceCategoryResponseDTO.class)).collect(Collectors.toList());
-	}
+	 @Override
+	    public List<ServiceCategoryResponseDTO> getAllServiceCategory() {
+	        List<ServiceCategory> serviceCategories = serviceCategoryRepository.findAll();
 
+	        // Map manually to ensure serviceCategoryId is populated
+	        return serviceCategories.stream()
+	                .map(cat -> new ServiceCategoryResponseDTO(
+	                        cat.getServiceCategoryId(),
+	                        cat.getServiceCategoryName(),
+	                        cat.getDescription(),
+	                        cat.getIsActive()
+	                ))
+	                .collect(Collectors.toList());
+	    }
 
 }

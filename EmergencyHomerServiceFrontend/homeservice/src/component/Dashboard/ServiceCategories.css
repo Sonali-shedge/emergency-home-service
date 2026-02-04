@@ -1,63 +1,66 @@
-.category-page {
+.service-categories-page {
   padding: 20px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.add-category {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
+.categories-table-wrapper,
+.services-table-wrapper {
+  margin-top: 20px;
+  overflow-x: auto;
 }
 
-.add-category input {
-  padding: 8px;
-  width: 220px;
-}
-
-.add-category button {
-  background: #007bff;
-  color: white;
-  border: none;
-  padding: 8px 14px;
-  cursor: pointer;
-}
-
-.category-table {
+.categories-table,
+.services-table {
   width: 100%;
-  background: white;
   border-collapse: collapse;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
-.category-table th,
-.category-table td {
+.categories-table th,
+.services-table th {
+  background-color: #1e2a38;
+  color: white;
+  text-align: left;
   padding: 12px;
-  border-bottom: 1px solid #ddd;
-  text-align: center;
 }
 
-.category-table th {
-  background: #f4f6f8;
+.categories-table td,
+.services-table td {
+  padding: 12px;
+  border-bottom: 1px solid #e0e0e0;
 }
 
-.active {
+.categories-table tr:nth-child(even),
+.services-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.categories-table tr:hover,
+.services-table tr:hover {
+  background-color: #f1f5f9;
+}
+
+.status-active {
   color: green;
   font-weight: bold;
 }
 
-.inactive {
+.status-inactive {
   color: red;
   font-weight: bold;
 }
 
-.btn-enable {
-  background: #28a745;
+.btn-view {
+  background-color: #1976d2;
   color: white;
   border: none;
-  padding: 6px 10px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
-.btn-disable {
-  background: #dc3545;
-  color: white;
-  border: none;
-  padding: 6px 10px;
+.btn-view:hover {
+  background-color: #1565c0;
 }

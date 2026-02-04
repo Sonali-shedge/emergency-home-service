@@ -61,6 +61,13 @@
   background-color: #125ea9;
 }
 
+select,
+input {
+  display: block;
+  width: 100%;
+  margin-bottom: 12px;
+}
+
 /* Mobile responsive */
 @media (max-width: 480px) {
   .register-container {
